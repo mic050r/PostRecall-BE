@@ -328,6 +328,123 @@ app.get("/quiz-importance", (req, res) => {
     });
 });
 
+// 개념 중요도 별로 내림차순, 오름차순
+app.get("/concept-sort", (req, res) => {
+  const { token, order } = req.query;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      const sqlQuery = `SELECT * FROM Concept WHERE token = ? ORDER BY importance ${
+        order === "asc" ? "ASC" : "DESC"
+      }`;
+      conn
+        .query(sqlQuery, [token])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 조건에 맞는 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
+            const data = results.map((result) => ({
+              description: result.description,
+            }));
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
+// 오답 중요도 별로 내림차순, 오름차순
+app.get("/wrong-sort", (req, res) => {
+  const { token, order } = req.query;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      const sqlQuery = `SELECT * FROM Wrong WHERE token = ? ORDER BY importance ${
+        order === "asc" ? "ASC" : "DESC"
+      }`;
+      conn
+        .query(sqlQuery, [token])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 조건에 맞는 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
+            const data = results.map((result) => ({
+              description: result.description,
+            }));
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
+// 퀴즈 중요도 별로 내림차순, 오름차순
+app.get("/quiz-sort", (req, res) => {
+  const { token, order } = req.query;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      const sqlQuery = `SELECT * FROM Quiz WHERE token = ? ORDER BY importance ${
+        order === "asc" ? "ASC" : "DESC"
+      }`;
+      conn
+        .query(sqlQuery, [token])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 조건에 맞는 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
+            const data = results.map((result) => ({
+              question: result.question,
+              description: result.description,
+            }));
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
 app.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
 });
