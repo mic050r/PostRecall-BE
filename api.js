@@ -119,7 +119,6 @@ app.get("/concept-list", (req, res) => {
           } else {
             // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
             const data = results.map((result) => ({
-              importance: result.importance,
               description: result.description,
             }));
             res.json(data);
@@ -156,7 +155,7 @@ app.get("/quiz-list", (req, res) => {
           } else {
             // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
             const data = results.map((result) => ({
-              importance: result.importance,
+              question: result.question,
               description: result.description,
             }));
             res.json(data);
@@ -193,7 +192,124 @@ app.get("/wrong-list", (req, res) => {
           } else {
             // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
             const data = results.map((result) => ({
-              importance: result.importance,
+              description: result.description,
+            }));
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
+// 퀴즈 포스트잇 중요도 태그 별 GET API
+app.get("/concept-importance", (req, res) => {
+  const { token, importance } = req.query;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      conn
+        .query("SELECT * FROM Concept WHERE token = ? AND importance = ?", [
+          token,
+          importance,
+        ])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 조건에 맞는 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
+            const data = results.map((result) => ({
+              description: result.description,
+            }));
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
+// 퀴즈 포스트잇 중요도 태그 별 GET API
+app.get("/wrong-importance", (req, res) => {
+  const { token, importance } = req.query;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      conn
+        .query("SELECT * FROM Wrong WHERE token = ? AND importance = ?", [
+          token,
+          importance,
+        ])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 조건에 맞는 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
+            const data = results.map((result) => ({
+              description: result.description,
+            }));
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
+// 퀴즈 포스트잇 중요도 태그 별 GET API
+app.get("/quiz-importance", (req, res) => {
+  const { token, importance } = req.query;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      conn
+        .query("SELECT * FROM Quiz WHERE token = ? AND importance = ?", [
+          token,
+          importance,
+        ])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 조건에 맞는 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 배열로 묶어서 JSON 응답으로 반환
+            const data = results.map((result) => ({
+              question: result.question,
               description: result.description,
             }));
             res.json(data);
