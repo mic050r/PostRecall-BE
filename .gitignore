@@ -1,2 +1,5 @@
 # node module 폴더를 ignore
 node_modules
+
+# kakao login 파일을 ignore
+login.js
