@@ -2,11 +2,20 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const port = 3000;
+const path = require("path");
 
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
 
 app.use(cors());
 app.use(express.json());
+
+// // 정적 파일 서빙 설정
+// app.use("./public", express.static("public"));
+
+// 라우팅 설정 예시
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
 
 // 개념 포스트잇 POST API 생성
 app.post("/concept", (req, res) => {
