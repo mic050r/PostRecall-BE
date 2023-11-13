@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 const path = require("path");
+const functions = require("firebase-functions");
 
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
 
@@ -15,6 +16,115 @@ app.use(express.json());
 // 라우팅 설정 예시
 app.get("/", (req, res) => {
   res.send("Hello, World!");
+});
+
+// const express = require("express");
+const nunjucks = require("nunjucks");
+const axios = require("axios");
+const qs = require("qs");
+const session = require("express-session");
+
+// Express 애플리케이션 설정
+app.set("view engine", "html");
+nunjucks.configure("views", {
+  express: app,
+});
+
+// Express 세션 설정
+app.use(
+  session({
+    secret: "ras",
+    resave: true,
+    saveUninitialized: false,
+  })
+);
+
+// 카카오 API 정보
+const kakao = {
+  clientID: "2c536552403975785e3fdc6053dfb673",
+  clientSecret: "BHcC3tbvBXLAMDPfOav74BDmhIZFTe1s",
+  redirectUri: "http://localhost:3000/auth/kakao/callback",
+};
+
+// 라우트 정의
+app.get("/", (req, res) => {
+  res.render("index");
+});
+// http://localhost:3000/auth/kakao
+app.get("/auth/kakao", (req, res) => {
+  const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${kakao.clientID}&redirect_uri=${kakao.redirectUri}&response_type=code`;
+  res.redirect(kakaoAuthURL);
+});
+app.get("/auth/kakao/callback", async (req, res) => {
+  try {
+    const tokenResponse = await axios({
+      method: "POST",
+      url: "https://kauth.kakao.com/oauth/token",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: qs.stringify({
+        grant_type: "authorization_code",
+        client_id: kakao.clientID,
+        client_secret: kakao.clientSecret,
+        redirectUri: kakao.redirectUri,
+        code: req.query.code,
+      }),
+    });
+
+    const { access_token } = tokenResponse.data;
+
+    const userResponse = await axios({
+      method: "get",
+      url: "https://kapi.kakao.com/v2/user/me",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+
+    // 사용자 정보를 세션에 저장
+    req.session.kakao = userResponse.data;
+
+    // 여기에서 세션에 토큰 및 사용자 정보 저장
+    req.session.accessToken = access_token;
+    req.session.nickname = userResponse.data.properties.nickname; // 닉네임
+    req.session.profileImage = userResponse.data.properties.profile_image; // 프로필 이미지
+
+    res.redirect("http://192.168.0.26:5500/home.html");
+  } catch (error) {
+    console.error("Error:", error);
+    res.json(error.data);
+  }
+});
+
+app.get("/token", (req, res) => {
+  const token = req.session.accessToken;
+
+  const tokenInfo = {
+    token: token,
+  };
+
+  res.json(tokenInfo);
+});
+
+// API 엔드포인트: 사용자 정보 가져오기
+app.get("/get-user-info", (req, res) => {
+  // 사용자 정보를 세션에서 가져와서 응답으로 보냅니다.
+  const userInfo = {
+    profileImage: req.session.profileImage,
+    nickname: req.session.nickname,
+  };
+
+  res.json(userInfo);
+});
+
+// Express 라우트에서 템플릿 렌더링
+app.get("/auth/info", (req, res) => {
+  const { nickname, profileImage } = req.session.kakao;
+  res.render("info", {
+    nickname,
+    profileImage,
+  });
 });
 
 // 개념 포스트잇 POST API 생성
@@ -457,3 +567,5 @@ app.get("/quiz-sort", (req, res) => {
 app.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
 });
+
+exports.api = functions.https.onRequest(app);
