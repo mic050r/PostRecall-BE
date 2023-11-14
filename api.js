@@ -3,7 +3,6 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 const path = require("path");
-const functions = require("firebase-functions");
 
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
 
@@ -567,5 +566,3 @@ app.get("/quiz-sort", (req, res) => {
 app.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
 });
-
-exports.api = functions.https.onRequest(app);
