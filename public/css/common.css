@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+}
+.hamburger-icon {
+    color: #734CEB;
+    font-size: 24px;
+    position: relative;
+    top: 40px;
+    left: 20px;
+}
+.hamburger-icon:before,
+.hamburger-icon:after {
+    content: '';
+    display: block;
+    background-color: #734CEB;
+    height: 3px;
+    width: 30px;
+    margin: 6px 0;
+}
+.content {
+    text-align: center;
+    padding: 2px;
+}
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    white-space: nowrap; /* 한 줄로 텍스트를 유지 */
+}
+.widget {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+}
+.widget .image-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.widget .image-button img {
+    width: 40px;
+    height: 60px;
+    margin: 20px;
+}

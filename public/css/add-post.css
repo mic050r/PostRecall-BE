@@ -1,0 +1,86 @@
+.rectangle {
+  width: 370px;
+  height: 380px;
+  flex-shrink: 0;
+  background: #e2d9fc;
+  margin-top: 121px;
+  margin-left: 10px;
+}
+.title {
+  color: #2c2c2c;
+  font-weight: bold;
+  font-family: "Noto Sans KR";
+  font-size: 24px;
+  font-weight: 500;
+  line-height: normal;
+  font-family: "Noto Sans KR";
+  margin-left: 158px;
+  padding-top: 30px;
+  margin-bottom: 15px;
+}
+.subtitle {
+  display: flex;
+  width: 55px;
+  height: 21px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #2c2c2c;
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  padding-left: 25px;
+}
+.custom-svg {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.custom-button {
+  margin-top: 15px;
+  margin-left: 25px;
+  cursor: pointer;
+  text-align: center;
+}
+.custom-rectangle {
+  width: 318px;
+  height: 166px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #fff;
+  margin-top: 25px;
+  margin-left: 27px;
+  overflow: hidden;
+  /* Hide overflow text */
+}
+
+input[type="text"] {
+  border: none;
+  width: 100%;
+  word-wrap: break-word;
+  /* Wrap text within the rectangle */
+}
+
+textarea {
+  width: 100%;
+  height: 100vh;
+}
+
+.custom-button-2 {
+  cursor: pointer;
+  text-align: center;
+}
+
+#submit-button {
+  margin-left: 110px;
+  background-color: #c7e0c800; /* 배경색 */
+  color: rgb(24, 24, 24); /* 글자색 */
+  padding: 10px 20px; /* 내부 여백 */
+  font-size: 16px; /* 글자 크기 */
+  border: none; /* 테두리 없음 */
+  border-radius: 4px; /* 테두리 반경 */
+  cursor: pointer; /* 커서 모양 변경 */
+}
