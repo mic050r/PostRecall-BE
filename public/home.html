@@ -11,11 +11,13 @@
       src="https://code.jquery.com/jquery-3.7.0.min.js"
       integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
       crossorigin="anonymous"></script>
-       <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js"
-  integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script>
-<script>
-  Kakao.init('4ee3afe28b0fadc41d033b1a042da756'); // 사용하려는 앱의 JavaScript 키 입력
-</script>
+    <script
+      src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js"
+      integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4"
+      crossorigin="anonymous"></script>
+    <script>
+      Kakao.init("4ee3afe28b0fadc41d033b1a042da756"); // 사용하려는 앱의 JavaScript 키 입력
+    </script>
   </head>
   <body>
     <div class="content">
@@ -78,13 +80,15 @@
           <img id="profile-image" alt="프로필" />
           <span id="nickname"></span>
         </li>
-        <li style="margin-top: 20px"><a href="http://localhost:3000/info.html">이용안내</a></li>
-        <li><a href="#">버전정보</a></li>
-        <li><a href="#">문의사항</a></li>
-        <button class="api-btn" onclick="kakaoLogout()">로그아웃</button>
+        <li style="margin-top: 20px">
+          <a href="http://localhost:3000/info.html">이용안내</a>
+        </li>
+        <li><a href="javascript:void(0)">버전정보</a></li>
+        <li><a href="javascript:void(0)">문의사항</a></li>
+        <!-- <button class="api-btn" onclick="kakaoLogout()">로그아웃</button> -->
       </ul>
     </div>
-    
+
     <script>
       const menu = document.querySelector(".menu");
       const hamburgerIcon = document.querySelector("#hamburger-icon");
@@ -124,34 +128,17 @@
 
           console.log("Profile Image:", profileImage);
           console.log("Nickname:", nickname);
-          
+
           const profileImageDOC = document.getElementById("profile-image");
           const nicknameElement = document.getElementById("nickname");
 
           // 프로필 이미지 및 닉네임 표시
-          profileImageDOC.src = profileImage
-          nicknameElement.textContent = nickname + "님"
-          
-          
+          profileImageDOC.src = profileImage;
+          nicknameElement.textContent = nickname + "님";
         } catch (error) {
           console.error("Error:", error);
         }
       }
-      function kakaoLogout() {
-      Kakao.Auth.logout()
-      .then(function() {
-        alert('logout ok\naccess token -> ' + Kakao.Auth.getAccessToken());
-        deleteCookie();
-      })
-      .catch(function() {
-        alert('Not logged in');
-      });
-  }
-      // 아래는 데모를 위한 UI 코드입니다.
-  function deleteCookie() {
-    document.cookie = 'authorize-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-  }
     </script>
-   
   </body>
 </html>
