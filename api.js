@@ -4,26 +4,36 @@ const app = express();
 const port = 3000;
 
 const path = require("path");
-const functions = require("firebase-functions");
-
+const nunjucks = require("nunjucks");
+const axios = require("axios");
+const qs = require("qs");
+const session = require("express-session");
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
 
 app.use(cors());
 app.use(express.json());
 
-// // 정적 파일 서빙 설정
-// app.use("./public", express.static("public"));
+// 정적 파일 서빙 설정
+app.use(express.static("public"));
+app.use("/style", express.static(__dirname + "/style"));
 
-// 라우팅 설정 예시
+app.use(
+  express.static("public", {
+    setHeaders: (res, path, stat) => {
+      res.set("Content-Type", "text/css");
+    },
+  })
+);
+
+// 라우트 정의
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.render("index");
 });
 
-// const express = require("express");
-const nunjucks = require("nunjucks");
-const axios = require("axios");
-const qs = require("qs");
-const session = require("express-session");
+app.get("/home", (req, res) => {
+  // 'public/home.html' 파일을 제공합니다.
+  res.sendFile(path.join(__dirname, "public", "home.html"));
+});
 
 // Express 애플리케이션 설정
 app.set("view engine", "html");
@@ -91,7 +101,7 @@ app.get("/auth/kakao/callback", async (req, res) => {
     req.session.nickname = userResponse.data.properties.nickname; // 닉네임
     req.session.profileImage = userResponse.data.properties.profile_image; // 프로필 이미지
 
-    res.redirect("http://192.168.0.26:5500/home.html");
+    res.redirect("http://localhost:3000/home");
   } catch (error) {
     console.error("Error:", error);
     res.json(error.data);
@@ -100,11 +110,9 @@ app.get("/auth/kakao/callback", async (req, res) => {
 
 app.get("/token", (req, res) => {
   const token = req.session.accessToken;
-
   const tokenInfo = {
     token: token,
   };
-
   res.json(tokenInfo);
 });
 
@@ -568,5 +576,3 @@ app.get("/quiz-sort", (req, res) => {
 app.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
 });
-
-exports.api = functions.https.onRequest(app);
