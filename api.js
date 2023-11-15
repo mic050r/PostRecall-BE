@@ -3,25 +3,36 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 const path = require("path");
-
+const nunjucks = require("nunjucks");
+const axios = require("axios");
+const qs = require("qs");
+const session = require("express-session");
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
 
 app.use(cors());
 app.use(express.json());
 
-// // 정적 파일 서빙 설정
-app.use("./public", express.static("public"));
+// 정적 파일 서빙 설정
+app.use(express.static("public"));
+app.use("/style", express.static(__dirname + "/style"));
 
-// 라우팅 설정 예시
+app.use(
+  express.static("public", {
+    setHeaders: (res, path, stat) => {
+      res.set("Content-Type", "text/css");
+    },
+  })
+);
+
+// 라우트 정의
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "main.html"));
+  res.render("index");
 });
 
-// const express = require("express");
-const nunjucks = require("nunjucks");
-const axios = require("axios");
-const qs = require("qs");
-const session = require("express-session");
+app.get("/home", (req, res) => {
+  // 'public/home.html' 파일을 제공합니다.
+  res.sendFile(path.join(__dirname, "public", "home.html"));
+});
 
 // Express 애플리케이션 설정
 app.set("view engine", "html");
@@ -29,47 +40,14 @@ nunjucks.configure("views", {
   express: app,
 });
 
-// app.use(
-//   session({
-//     secret: "ras",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//       httpOnly: false,
-//     },
-//   })
-// );
-
-// // CORS 설정
-// app.use(
-//   cors({
-//     origin: "http://172.27.128.1:5500",
-//     credentials: true,
-//   })
-// );
+// Express 세션 설정
 app.use(
   session({
     secret: "ras",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: false, // httpOnly를 false로 설정
-    },
+    resave: true,
+    saveUninitialized: false,
   })
 );
-// app.use(
-//   cors({
-//     origin: "http://172.27.128.1:5500", // 클라이언트의 도메인
-//     credentials: true, // credentials 허용
-//   })
-// );
-// CORS 설정
-const corsOptions = {
-  origin: "http://10.96.122.68:5500",
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
 
 // 카카오 API 정보
 const kakao = {
@@ -82,13 +60,11 @@ const kakao = {
 app.get("/", (req, res) => {
   res.render("index");
 });
-
 // http://localhost:3000/auth/kakao
 app.get("/auth/kakao", (req, res) => {
   const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${kakao.clientID}&redirect_uri=${kakao.redirectUri}&response_type=code`;
   res.redirect(kakaoAuthURL);
 });
-
 app.get("/auth/kakao/callback", async (req, res) => {
   try {
     const tokenResponse = await axios({
@@ -124,7 +100,7 @@ app.get("/auth/kakao/callback", async (req, res) => {
     req.session.nickname = userResponse.data.properties.nickname; // 닉네임
     req.session.profileImage = userResponse.data.properties.profile_image; // 프로필 이미지
 
-    res.redirect("http://10.96.122.68:5500/home.html");
+    res.redirect("http://localhost:3000/home");
   } catch (error) {
     console.error("Error:", error);
     res.json(error.data);
@@ -133,37 +109,22 @@ app.get("/auth/kakao/callback", async (req, res) => {
 
 app.get("/token", (req, res) => {
   const token = req.session.accessToken;
-
   const tokenInfo = {
     token: token,
   };
-
   res.json(tokenInfo);
 });
 
+// API 엔드포인트: 사용자 정보 가져오기
 app.get("/get-user-info", (req, res) => {
-  res.cookie("myCookie", "test", {
-    httpOnly: true,
-    domain: "http://10.96.122.68:5500", // 실제 도메인으로 변경
-    path: "/", // 필요에 따라 경로 설정
-  });
+  // 사용자 정보를 세션에서 가져와서 응답으로 보냅니다.
   const userInfo = {
     profileImage: req.session.profileImage,
     nickname: req.session.nickname,
   };
 
-  // 클라이언트에게 응답을 보내기 전에 쿠키 설정이 이루어져야 합니다.
   res.json(userInfo);
 });
-
-// app.get("/get-user-info", (req, res) => {
-//   const userInfo = {
-//     profileImage: req.session.profileImage,
-//     nickname: req.session.nickname,
-//   };
-//   console.log("Server Sent Data:", userInfo); // 확인을 위한 로그 추가
-//   res.json(userInfo);
-// });
 
 // Express 라우트에서 템플릿 렌더링
 app.get("/auth/info", (req, res) => {

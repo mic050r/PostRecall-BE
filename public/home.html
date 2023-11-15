@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아이폰 12 Pro 화면</title>
+    <link rel="stylesheet" href="./css/common.css" />
+    <link rel="stylesheet" href="./css/home.css" />
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="content">
+      <h2 style="font-size: 20px">포스트잇 추가</h2>
+
+      <div class="image-button-container">
+        <button class="image-button">
+          <div class="add-btn" onclick="navigateToPage(1)">
+            <img src="images/+.png" alt="이미지 1" />
+            <p><strong>개념</strong></p>
+          </div>
+        </button>
+        <button class="image-button" onclick="navigateToPage(2)">
+          <div class="add-btn">
+            <img src="images/+.png" alt="이미지 1" />
+            <p><strong>퀴즈</strong></p>
+          </div>
+        </button>
+        <button class="image-button" onclick="navigateToPage(3)">
+          <div class="add-btn">
+            <img src="images/+.png" alt="이미지 1" />
+            <p><strong>오답</strong></p>
+          </div>
+        </button>
+      </div>
+
+      <div class="rounded-rectangle">
+        <button class="button" onclick="navigateToPage(4)">타이핑</button>
+      </div>
+    </div>
+    <div class="static-hamburger-icon" id="hamburger-icon">&#9776;</div>
+    <div class="widget">
+      <button class="image-button" onclick="navigateToPage(5)">
+        <div class="add-btn">
+          <img src="images/home.png" alt="이미지 2" />
+        </div>
+      </button>
+
+      <button class="image-button" onclick="navigateToPage(6)">
+        <div class="add-btn">
+          <img src="images/개념.png" alt="이미지 2" />
+        </div>
+      </button>
+
+      <button class="image-button" onclick="navigateToPage(7)">
+        <div class="add-btn">
+          <img src="images/퀴즈.png" alt="이미지 3" />
+        </div>
+      </button>
+
+      <button class="image-button" onclick="navigateToPage(8)">
+        <div class="add-btn">
+          <img src="images/오답.png" alt="이미지 4" />
+        </div>
+      </button>
+    </div>
+    <div class="menu">
+      <ul>
+        <li id="kakao-profile">
+          <img id="profile-image" alt="프로필" />
+          <span id="nickname">임지현</span>
+        </li>
+        <li style="margin-top: 20px"><a href="#">이용안내</a></li>
+        <li><a href="#">버전정보</a></li>
+        <li><a href="#">문의사항</a></li>
+      </ul>
+    </div>
+    
+    <script>
+      const menu = document.querySelector(".menu");
+      const hamburgerIcon = document.querySelector("#hamburger-icon");
+
+      hamburgerIcon.addEventListener("click", () => {
+        if (menu.style.left === "0px") {
+          menu.style.left = "-250px";
+          hamburgerIcon.classList.remove("menu-open");
+        } else {
+          menu.style.left = "0px";
+          hamburgerIcon.classList.add("menu-open");
+        }
+      });
+
+      // 예시로 fetch를 사용한 클라이언트 측 코드
+      async function getUserInfo() {
+        try {
+          const response = await fetch("http://localhost:3000/get-user-info", {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+
+          // 서버에서 받은 데이터 출력
+          console.log("Received data:", data);
+
+          // 실제 사용할 데이터가 어디에 있는지 확인
+          const profileImage = data.profileImage;
+          const nickname = data.nickname;
+
+          console.log("Profile Image:", profileImage);
+          console.log("Nickname:", nickname);
+          
+          const profileImageDOC = document.getElementById("profile-image");
+          const nicknameElement = document.getElementById("nickname");
+
+          // 프로필 이미지 및 닉네임 표시
+          profileImageDOC.src = profileImage
+          nicknameElement.textContent = nickname
+          
+          
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      // getUserInfo 함수 호출
+      getUserInfo();
+    </script>
+  </body>
+</html>
