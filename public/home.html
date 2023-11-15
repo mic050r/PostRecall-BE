@@ -70,7 +70,7 @@
       <ul>
         <li id="kakao-profile">
           <img id="profile-image" alt="프로필" />
-          <span id="nickname">임지현</span>
+          <span id="nickname"></span>
         </li>
         <li style="margin-top: 20px"><a href="#">이용안내</a></li>
         <li><a href="#">버전정보</a></li>
@@ -90,6 +90,8 @@
           menu.style.left = "0px";
           hamburgerIcon.classList.add("menu-open");
         }
+        // getUserInfo 함수 호출
+      getUserInfo();
       });
 
       // 예시로 fetch를 사용한 클라이언트 측 코드
@@ -121,7 +123,7 @@
 
           // 프로필 이미지 및 닉네임 표시
           profileImageDOC.src = profileImage
-          nicknameElement.textContent = nickname
+          nicknameElement.textContent = nickname + "님"
           
           
         } catch (error) {
@@ -129,8 +131,7 @@
         }
       }
 
-      // getUserInfo 함수 호출
-      getUserInfo();
+      
     </script>
   </body>
 </html>
