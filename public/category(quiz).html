@@ -2,32 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE- edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>퀴즈 포스트잇 모음집</title>
+    <title>오답 포스트잇 모음집</title>
     <link rel="stylesheet" href="./css/common.css" />
     <link rel="stylesheet" href="./css/category.css" />
+    <style>
+      .rectangle {
+        cursor: pointer;
+        transition: transform 0.5s;
+      }
+    </style>
   </head>
+
   <body>
-    <div class="title"><strong>퀴즈</strong></div>
-    <img src="images/Group 15.svg" class="custom-button" />
-    <img src="images/Group 16.svg" class="custom-button" />
-    <img src="images/Group 17.svg" class="custom-button" />
+    <div class="title"><strong>오답</strong></div>
+    <button
+      class="custom-button"
+      id="button1"
+      value="1"
+      onclick="fetchQuizImportance(1)">
+      <img src="images/Group 15.svg" alt="Button 1" />
+    </button>
+    <button
+      class="custom-button"
+      id="button2"
+      value="2"
+      onclick="fetchQuizImportance(2)">
+      <img src="images/Group 16.svg" alt="Button 2" />
+    </button>
+    <button
+      class="custom-button"
+      id="button3"
+      value="3"
+      onclick="fetchQuizImportance(3)">
+      <img src="images/Group 17.svg" alt="Button 3" />
+    </button>
     <div class="option">
-      <select id="sortDropdown" onclick="toggleOptions()">
+      <select id="sortDropdown" onchange="toggleOptions()">
         <option value="0">중요도</option>
         <option value="1">오름차순</option>
         <option value="2">내림차순</option>
       </select>
     </div>
 
-    <div class="rectangles">
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
+    <div class="rectangles" id="rectangleContainer">
+      <!-- 동적으로 생성될 엘리먼트들이 들어갈 컨테이너 -->
     </div>
 
     <div class="widget">
@@ -44,14 +64,96 @@
         ><img src="images/오답.png" alt="이미지 4"
       /></a>
     </div>
+
     <script>
-      function toggleOptions() {
+      async function toggleOptions() {
         var sortDropdown = document.getElementById("sortDropdown");
         var selectedValue = sortDropdown.value;
-        if (selectedValue == 0) {
-          sortDropdown.value = 1;
+
+        if (selectedValue == 1) {
+          fetchQuizSort("asc");
+        } else if (selectedValue == 2) {
+          fetchQuizSort("desc");
         }
       }
+
+      let clientToken; // 토큰 값을 저장할 변수
+
+      async function getToken() {
+        try {
+          const response = await fetch("http://localhost:3000/token");
+          if (!response.ok) {
+            throw new Error("네트워크 응답이 올바르지 않습니다");
+          }
+          const data = await response.json();
+          clientToken = data.token; // 토큰 값 설정
+        } catch (error) {
+          console.error("토큰을 가져오는 중 오류 발생:", error);
+          throw error;
+        }
+      }
+
+      function createRectangle(question, description) {
+        const rectangle = document.createElement("div");
+        rectangle.classList.add("rectangle");
+        rectangle.textContent = question;
+
+        let isFlipped = false; // 사각형의 현재 상태 추적
+
+        rectangle.addEventListener("click", function () {
+          if (isFlipped) {
+            rectangle.style.transform = "scaleX(1)";
+            rectangle.textContent = question;
+          } else {
+            rectangle.style.transform = "scaleX(1)";
+            rectangle.textContent = ""; // Clear previous text before setting new text
+            const descText = document.createTextNode(description);
+            rectangle.appendChild(descText);
+          }
+
+          isFlipped = !isFlipped; // 상태 반전
+        });
+
+        document.getElementById("rectangleContainer").appendChild(rectangle);
+      }
+
+      function fetchData(endpoint, order = "", importance = "") {
+        const serverUrl = "http://localhost:3000";
+        const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
+          importance ? `&importance=${importance}` : ""
+        }`;
+
+        fetch(`${serverUrl}${endpoint}${query}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const container = document.getElementById("rectangleContainer");
+            container.innerHTML = "";
+
+            data.forEach((item) => {
+              createRectangle(item.question, item.description);
+            });
+          })
+          .catch((error) => {
+            console.error("데이터를 가져오는 중 오류 발생:", error);
+          });
+      }
+
+      async function fetchQuizList() {
+        await getToken();
+        fetchData("/quiz-list");
+      }
+
+      async function fetchQuizImportance(importance) {
+        await getToken();
+        fetchData("/quiz-importance", "", importance);
+      }
+
+      async function fetchQuizSort(order) {
+        await getToken();
+        fetchData("/quiz-sort", order);
+      }
+
+      fetchQuizList();
     </script>
   </body>
 </html>
