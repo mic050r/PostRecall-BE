@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE-edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="css/add-quiz.css" />
@@ -12,29 +12,31 @@
     <div class="rectangle">
       <div class="title">퀴즈</div>
       <div class="subtitle">중요도</div>
-     
-        <button class="custom-button" id="button1" value="1">
-          <img src="images/Group 15.svg" alt="Button 1" />
-        </button>
-        <button class="custom-button" id="button2" value="2">
-          <img src="images/Group 16.svg" alt="Button 2" />
-        </button>
-        <button class="custom-button" id="button3" value="3">
-          <img src="images/Group 17.svg" alt="Button 3" />
+
+      <button class="custom-button" id="button1" value="1">
+        <img src="images/Group 15.svg" alt="Button 1" />
+      </button>
+      <button class="custom-button" id="button2" value="2">
+        <img src="images/Group 16.svg" alt="Button 2" />
+      </button>
+      <button class="custom-button" id="button3" value="3">
+        <img src="images/Group 17.svg" alt="Button 3" />
       </button>
       <div class="custom-rectangle">
-        <textarea id="question" placeholder="질문을 입력해주세요 (300글자 이내)"></textarea>
+        <textarea
+          id="question"
+          placeholder="질문을 입력해주세요 (300글자 이내)"></textarea>
       </div>
       <div class="custom-rectangle2">
-        <textarea id="description" placeholder="개념을 입력해주세요 (300글자 이내)"></textarea>
+        <textarea
+          id="description"
+          placeholder="개념을 입력해주세요 (300글자 이내)"></textarea>
       </div>
-      <input
-        type="submit"
-        value="포스트잇 생성"
-        id="submit-button"
-        onclick="createPostit()"
-      />
+      <button type="button" id="submit-button" onclick="createPostit()">
+        포스트잇 생성
+      </button>
     </div>
+
     <div class="widget">
       <a class="image-button" href="home.html"
         ><img src="images/home.png" alt="이미지 1"
@@ -49,54 +51,85 @@
         ><img src="images/오답.png" alt="이미지 4"
       /></a>
     </div>
-  </body>
-  <script>
-      function addButtonClickHandler(buttonId) {
-        const button = document.getElementById(buttonId);
-        button.addEventListener('click', () => {
-         
-          const question = document.getElementById('question');
-          const description = document.getElementById('description').value;
 
-          // API 엔드포인트
-          const apiUrl = 'http://localhost:3000/quiz';
+    <script>
+      async function getToken() {
+        try {
+          const response = await fetch("http://localhost:3000/token");
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          return data.token;
+        } catch (error) {
+          console.error("Error fetching token:", error);
+          throw error;
+        }
+      }
 
-          // 데이터
-          const data = {
-            token: '1234', // 토큰 값 설정
-            importance: button.value, // 버튼의 value를 중요도로 사용
-            question:question.value,
-            description: description,
-            
-          };
+      async function postData(importance, question, description) {
+        const apiUrl = "http://localhost:3000/quiz";
+        const token = await getToken();
 
-          console.log(data)
-          // Fetch API를 사용하여 서버에 POST 요청 전송
-          fetch(apiUrl, {
-            method: 'POST',
+        const data = {
+          token: token,
+          importance: importance,
+          question: question,
+          description: description,
+        };
+
+        try {
+          const response = await fetch(apiUrl, {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.json();
-            })
-            .then((data) => {
-              console.log('Data:', data);
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-            });
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const responseData = await response.json();
+          console.log("Data:", responseData);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      function createPostit() {
+        const selectedButton = document.querySelector(
+          ".custom-button.selected"
+        );
+        const question = document.getElementById("question");
+        const description = document.getElementById("description").value;
+
+        if (!selectedButton || !question.value || !description) {
+          console.error(
+            "Please select a button, provide a question, and a description."
+          );
+          return;
+        }
+
+        postData(selectedButton.value, question.value, description);
+      }
+
+      function addButtonClickHandler(buttonId) {
+        const button = document.getElementById(buttonId);
+
+        button.addEventListener("click", () => {
+          const buttons = document.querySelectorAll(".custom-button");
+          buttons.forEach((btn) => btn.classList.remove("selected"));
+
+          button.classList.add("selected");
         });
       }
 
       // 각 버튼에 이벤트 핸들러 추가
-      addButtonClickHandler('button1');
-      addButtonClickHandler('button2');
-      addButtonClickHandler('button3');
+      addButtonClickHandler("button1");
+      addButtonClickHandler("button2");
+      addButtonClickHandler("button3");
     </script>
+  </body>
 </html>

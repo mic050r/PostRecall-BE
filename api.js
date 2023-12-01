@@ -121,9 +121,8 @@ app.get("/auth/kakao/callback", async (req, res) => {
 });
 
 app.get("/token", (req, res) => {
-  const token = req.session.accessToken;
   const tokenInfo = {
-    token: token,
+    token: req.session.nickname,
   };
   res.json(tokenInfo);
 });
