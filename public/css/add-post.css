@@ -84,3 +84,7 @@ textarea {
   border-radius: 4px; /* 테두리 반경 */
   cursor: pointer; /* 커서 모양 변경 */
 }
+#button2,
+#button3 {
+  margin-left: -2px; /* 원하는 만큼 음수값으로 설정하여 왼쪽으로 이동 */
+}

@@ -139,3 +139,18 @@ textarea {
   height: 60px;
   margin: 20px;
 }
+
+#submit-button {
+  margin-left: 110px;
+  background-color: #c7e0c800; /* 배경색 */
+  color: rgb(24, 24, 24); /* 글자색 */
+  padding: 25px 11px; /* 내부 여백 */
+  font-size: 16px; /* 글자 크기 */
+  border: none; /* 테두리 없음 */
+  border-radius: 4px; /* 테두리 반경 */
+  cursor: pointer; /* 커서 모양 변경 */
+}
+#button2,
+#button3 {
+  margin-left: -2px; /* 원하는 만큼 음수값으로 설정하여 왼쪽으로 이동 */
+}
