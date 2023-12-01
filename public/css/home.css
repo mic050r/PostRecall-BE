@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+
+.header {
+  background-color: transparent;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+
+.content {
+  text-align: center;
+  padding: 120px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  white-space: nowrap; /* 한 줄로 텍스트를 유지 */
+}
+
+.image-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.image-button img {
+  width: 70px;
+  height: 80px;
+  margin: 10px;
+}
+
+.image-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.rounded-rectangle {
+  background-color: #734ceb;
+  margin-top: 280px;
+  border-radius: 7px;
+  padding: 10px;
+  color: #ffffff;
+}
+
+.button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 120px;
+  color: #ffffff;
+}
+
+.additional-image {
+  width: 70px;
+  height: 80px;
+  margin: 10px;
+}
+
+.menu {
+  position: fixed;
+  top: 0;
+  left: -250px; /* 메뉴를 초기에 화면 왼쪽에 숨김 */
+  width: 250px;
+  height: 100%;
+  background-color: #eeeafb;
+  padding-top: 60px; /* 상단 여백으로 햄버거 아이콘과 겹치지 않도록 조절 */
+  transition: left 0.3s ease; /* 왼쪽 위치 변경에 애니메이션 효과 추가 */
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  padding: 10px;
+  margin-bottom: 15px;
+  margin-left: 17px; /* 조금 왼쪽으로 이동 */
+}
+
+.menu a {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+}
+#kakao-profile {
+  display: flex;
+  align-items: center;
+}
+
+#profile-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+#nickname {
+  color: rgb(0, 0, 0);
+  font-weight: bold; /* 닉네임 텍스트를 더 강조하기 위해 굵게 지정 */
+  margin-right: 10px;
+}
+
+/* 추가된 스타일 */
+#kakao-profile span {
+  display: flex;
+  align-items: center;
+}
+
+/* 햄버거 아이콘 스타일 */
+#hamburger-icon {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 2;
+  color: #734ceb; /* 초기 아이콘 색상 */
+}
+
+.menu-open #hamburger-icon {
+  left: 230px; /* 메뉴 열릴 때 아이콘 위치 조정 */
+  color: #333; /* 아이콘 색상 변경 */
+}
+.static-hamburger-icon {
+  color: #734ceb;
+  font-size: 24px;
+  position: fixed;
+  top: 40px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.menu-open .static-hamburger-icon {
+  color: #734ceb;
+  display: none;
+}

@@ -1,15 +1,16 @@
-const express = require('express');
+// 모듈 선언
+const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
 const app = express();
 const port = 3000;
-
 const path = require("path");
 const nunjucks = require("nunjucks");
 const axios = require("axios");
-const qs = require("qs");
-const session = require("express-session");
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
+const qs = require("qs");
 
+// 기본 설정
 app.use(cors());
 app.use(express.json());
 
@@ -24,16 +25,6 @@ app.use(
     },
   })
 );
-
-// 라우트 정의
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-app.get("/home", (req, res) => {
-  // 'public/home.html' 파일을 제공합니다.
-  res.sendFile(path.join(__dirname, "public", "home.html"));
-});
 
 // Express 애플리케이션 설정
 app.set("view engine", "html");
@@ -50,6 +41,11 @@ app.use(
   })
 );
 
+// html 파일들 라우트 정의
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
 // 카카오 API 정보
 const kakao = {
   clientID: "2c536552403975785e3fdc6053dfb673",
@@ -57,10 +53,6 @@ const kakao = {
   redirectUri: "http://localhost:3000/auth/kakao/callback",
 };
 
-// 라우트 정의
-app.get("/", (req, res) => {
-  res.render("index");
-});
 // http://localhost:3000/auth/kakao
 app.get("/auth/kakao", (req, res) => {
   const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${kakao.clientID}&redirect_uri=${kakao.redirectUri}&response_type=code`;
@@ -101,7 +93,7 @@ app.get("/auth/kakao/callback", async (req, res) => {
     req.session.nickname = userResponse.data.properties.nickname; // 닉네임
     req.session.profileImage = userResponse.data.properties.profile_image; // 프로필 이미지
 
-    res.redirect("http://localhost:3000/home");
+    res.redirect("http://localhost:3000/home.html");
   } catch (error) {
     console.error("Error:", error);
     res.json(error.data);
@@ -116,9 +108,8 @@ app.get("/token", (req, res) => {
   res.json(tokenInfo);
 });
 
-// API 엔드포인트: 사용자 정보 가져오기
+// 사용자 프로필, 닉네임 가져오는 API
 app.get("/get-user-info", (req, res) => {
-  // 사용자 정보를 세션에서 가져와서 응답으로 보냅니다.
   const userInfo = {
     profileImage: req.session.profileImage,
     nickname: req.session.nickname,

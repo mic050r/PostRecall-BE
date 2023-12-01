@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE-edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/add-quiz.css" />
+  </head>
+
+  <body>
+    <div class="rectangle">
+      <div class="title">퀴즈</div>
+      <div class="subtitle">중요도</div>
+     
+        <button class="custom-button" id="button1" value="1">
+          <img src="images/Group 15.svg" alt="Button 1" />
+        </button>
+        <button class="custom-button" id="button2" value="2">
+          <img src="images/Group 16.svg" alt="Button 2" />
+        </button>
+        <button class="custom-button" id="button3" value="3">
+          <img src="images/Group 17.svg" alt="Button 3" />
+      </button>
+      <div class="custom-rectangle">
+        <textarea id="question" placeholder="질문을 입력해주세요 (300글자 이내)"></textarea>
+      </div>
+      <div class="custom-rectangle2">
+        <textarea id="description" placeholder="개념을 입력해주세요 (300글자 이내)"></textarea>
+      </div>
+      <input
+        type="submit"
+        value="포스트잇 생성"
+        id="submit-button"
+        onclick="createPostit()"
+      />
+    </div>
+    <div class="widget">
+      <a class="image-button" href="home.html"
+        ><img src="images/home.png" alt="이미지 1"
+      /></a>
+      <a class="image-button" href="category(concept).html"
+        ><img src="images/개념.png" alt="이미지 2"
+      /></a>
+      <a class="image-button" href="category(quiz).html"
+        ><img src="images/퀴즈.png" alt="이미지 3"
+      /></a>
+      <a class="image-button" href="category(wronganswer).html"
+        ><img src="images/오답.png" alt="이미지 4"
+      /></a>
+    </div>
+  </body>
+  <script>
+      function addButtonClickHandler(buttonId) {
+        const button = document.getElementById(buttonId);
+        button.addEventListener('click', () => {
+         
+          const question = document.getElementById('question');
+          const description = document.getElementById('description').value;
+
+          // API 엔드포인트
+          const apiUrl = 'http://localhost:3000/quiz';
+
+          // 데이터
+          const data = {
+            token: '1234', // 토큰 값 설정
+            importance: button.value, // 버튼의 value를 중요도로 사용
+            question:question.value,
+            description: description,
+            
+          };
+
+          console.log(data)
+          // Fetch API를 사용하여 서버에 POST 요청 전송
+          fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log('Data:', data);
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+        });
+      }
+
+      // 각 버튼에 이벤트 핸들러 추가
+      addButtonClickHandler('button1');
+      addButtonClickHandler('button2');
+      addButtonClickHandler('button3');
+    </script>
+</html>

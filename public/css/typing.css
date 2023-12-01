@@ -1,0 +1,49 @@
+.title {
+  color: #2c2c2c;
+  font-family: "Noto Sans KR";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-align: center; /* 가운데 정렬 추가 */
+  padding-top: 30px;
+}
+.button {
+  width: 79px;
+  height: 33px;
+  border-radius: 6px;
+  background: var(
+    --button-color,
+    #734ceb
+  ); /* 버튼 배경색을 var() 함수를 통해 지정 */
+  position: absolute;
+  top: 116px; /* 원하는 수직 위치(px) */
+  left: 286px; /* 원하는 수평 위치(px) */
+}
+
+.button input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 6px;
+  background: var(--button-color, #734ceb);
+  color: white; /* 버튼 텍스트 색상 */
+  cursor: pointer;
+}
+.input p {
+  width: 338px;
+  height: 578px;
+  top: 150px; /* 원하는 수직 위치(px) */
+  left: 27px; /* 원하는 수평 위치(px) */
+  position: absolute;
+  flex-shrink: 0;
+  background: #f4f4f4;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.input textarea {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px;
+}
