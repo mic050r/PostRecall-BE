@@ -146,6 +146,63 @@ app.get("/auth/info", (req, res) => {
   });
 });
 
+// Inquiry 목록 조회 API
+app.get("/inquiry-list", (req, res) => {
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에 데이터 삽입
+      conn
+        .query("SELECT * FROM Inquiry")
+        .then((result) => {
+          conn.release(); // 연결 반환
+
+          // 조회된 결과를 클라이언트에게 응답
+          res.json(result);
+        })
+        .catch((err) => {
+          conn.release(); // 연결 반환
+
+          console.error("조회 중 오류 발생:", err);
+          res.status(500).json({ error: "서버 오류" });
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "서버 오류" });
+    });
+});
+
+// Inquiry 생성 API
+app.post("/inquiries", (req, res) => {
+  const { user_id, title, message, status } = req.body;
+
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에 데이터 삽입
+      conn
+        .query(
+          "INSERT INTO Inquiry (user_id, title, message, status) VALUES (?, ?, ?, ?)",
+          [user_id, title, message, status]
+        )
+        .then((result) => {
+          console.log("데이터가 성공적으로 삽입되었습니다.");
+          res.json({ message: "데이터가 성공적으로 삽입되었습니다." });
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 삽입 오류:", err);
+          res.status(500).json({ error: "데이터 삽입 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
 // 카카오 로그아웃
 // auth//kakao/logout
 app.get("/kakao/logout", async (req, res) => {
