@@ -2,17 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE- edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>개념 포스트잇 모음집</title>
     <link rel="stylesheet" href="./css/common.css" />
     <link rel="stylesheet" href="./css/category.css" />
   </head>
+
   <body>
     <div class="title"><strong>개념</strong></div>
-    <img src="images/Group 15.svg" class="custom-button" />
-    <img src="images/Group 16.svg" class="custom-button" />
-    <img src="images/Group 17.svg" class="custom-button" />
+    <button
+      class="custom-button"
+      id="button1"
+      value="1"
+      onclick="fetchConceptImportance(1)">
+      <img src="images/Group 15.svg" alt="Button 1" />
+    </button>
+    <button
+      class="custom-button"
+      id="button2"
+      value="2"
+      onclick="fetchConceptImportance(2)">
+      <img src="images/Group 16.svg" alt="Button 2" />
+    </button>
+    <button
+      class="custom-button"
+      id="button3"
+      value="3"
+      onclick="fetchConceptImportance(3)">
+      <img src="images/Group 17.svg" alt="Button 3" />
+    </button>
     <div class="option">
       <select id="sortDropdown" onchange="toggleOptions()">
         <option value="0">중요도</option>
@@ -21,13 +40,8 @@
       </select>
     </div>
 
-    <div class="rectangles">
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
-      <div class="rectangle"></div>
+    <div class="rectangles" id="rectangleContainer">
+      <!-- 동적으로 생성될 엘리먼트들이 들어갈 컨테이너 -->
     </div>
 
     <div class="widget">
@@ -44,54 +58,82 @@
         ><img src="images/오답.png" alt="이미지 4"
       /></a>
     </div>
+
     <script>
-      function toggleOptions() {
+      async function toggleOptions() {
         var sortDropdown = document.getElementById("sortDropdown");
         var selectedValue = sortDropdown.value;
-        if (selectedValue == 0) {
-          sortDropdown.value = 1;
+
+        if (selectedValue == 1) {
+          fetchConceptSort("asc");
+        } else if (selectedValue == 2) {
+          fetchConceptSort("desc");
         }
       }
 
-      const clientToken = '1234';
+      let clientToken; // 토큰 값을 저장할 변수
 
-      function fetchData(endpoint, order = '', importance = '') {
-        // 'your-server-url'를 실제 서버가 호스팅된 URL로 대체하세요.
-        const serverUrl = 'http://localhost:3000'; // 실제 서버 URL로 변경
+      async function getToken() {
+        try {
+          const response = await fetch("http://localhost:3000/token");
+          if (!response.ok) {
+            throw new Error("네트워크 응답이 올바르지 않습니다");
+          }
+          const data = await response.json();
+          clientToken = data.token; // 토큰 값 설정
+        } catch (error) {
+          console.error("토큰을 가져오는 중 오류 발생:", error);
+          throw error;
+        }
+      }
 
-        // GET 요청
-        const query = `?token=${clientToken}${order ? `&order=${order}` : ''}${importance ? `&importance=${importance}` : ''}`;
+      function createRectangle(description) {
+        const rectangle = document.createElement("div");
+        rectangle.classList.add("rectangle");
+        // 데이터를 이용하여 엘리먼트 내용을 동적으로 생성할 수 있음
+        rectangle.textContent = description; // 데이터의 description으로 변경
+
+        document.getElementById("rectangleContainer").appendChild(rectangle);
+      }
+
+      function fetchData(endpoint, order = "", importance = "") {
+        const serverUrl = "http://localhost:3000";
+        const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
+          importance ? `&importance=${importance}` : ""
+        }`;
+
         fetch(`${serverUrl}${endpoint}${query}`)
           .then((response) => response.json())
           .then((data) => {
-            // 여기서 검색한 데이터를 처리하세요.
-            console.log(data);
+            // 가져온 데이터를 이용하여 엘리먼트 생성
+            const container = document.getElementById("rectangleContainer");
+            container.innerHTML = ""; // 기존의 자식 엘리먼트 제거
+
+            data.forEach((item) => {
+              createRectangle(item.description);
+            });
           })
           .catch((error) => {
-            console.error('데이터를 가져오는 중 오류 발생:', error);
+            console.error("데이터를 가져오는 중 오류 발생:", error);
           });
       }
 
-      function fetchWrongImportance() {
-        fetchData('/wrong-importance', '', 'high');
+      async function fetchConceptList() {
+        await getToken();
+        fetchData("/concept-list");
       }
 
-      function fetchWrongSort() {
-        fetchData('/wrong-sort');
+      async function fetchConceptImportance(importance) {
+        await getToken();
+        fetchData("/concept-importance", "", importance);
       }
 
-      function fetchWrongSortOrder(order) {
-        fetchData('/wrong-sort', `&order=${order}`);
+      async function fetchConceptSort(order) {
+        await getToken();
+        fetchData("/concept-sort", order);
       }
 
-      // 예시: 클라이언트에서 오답 포스트잇 중요도 태그 별 GET API 호출
-      fetchWrongImportance();
-      // 예시: 클라이언트에서 오답 포스트잇 중요도 태그 별 GET API 호출
-      fetchWrongSort();
-      // 예시: 클라이언트에서 오답 포스트잇 중요도 태그 별 GET API 호출 (오름차순)
-      fetchWrongSortOrder('asc');
-      // 예시: 클라이언트에서 오답 포스트잇 중요도 태그 별 GET API 호출 (내림차순)
-      fetchWrongSortOrder('desc');
+      fetchConceptList();
     </script>
   </body>
 </html>
