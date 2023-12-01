@@ -9,6 +9,7 @@ const nunjucks = require("nunjucks");
 const axios = require("axios");
 const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오기
 const qs = require("qs");
+const passport = require("passport");
 
 // 기본 설정
 app.use(cors());
@@ -32,6 +33,14 @@ nunjucks.configure("views", {
   express: app,
 });
 
+app.use(
+  require("express-session")({
+    secret: "ras",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 // Express 세션 설정
 app.use(
   session({
@@ -40,6 +49,17 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+// Serialize 및 Deserialize 설정
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
 
 // html 파일들 라우트 정의
 app.get("/", (req, res) => {
@@ -125,6 +145,30 @@ app.get("/auth/info", (req, res) => {
     nickname,
     profileImage,
   });
+});
+
+// 카카오 로그아웃
+// auth//kakao/logout
+app.get("/kakao/logout", async (req, res) => {
+  // https://kapi.kakao/com/v1/user/logout
+  try {
+    const ACCESS_TOKEN = req.session.accessToken;
+    let logout = await axios({
+      method: "post",
+      url: "https://kapi.kakao.com/v1/user/unlink",
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.json(error);
+  }
+  // 세션 정리
+  req.logout();
+  req.session.destroy();
+
+  res.redirect("/");
 });
 
 // 개념 포스트잇 POST API 생성
