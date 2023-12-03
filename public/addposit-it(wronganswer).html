@@ -1,39 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- head 내용 생략 -->
+    <!-- 페이지 제목 및 스타일시트 링크 -->
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>포스트잇 추가 오답</title>
     <link rel="stylesheet" href="./css/add-post.css" />
     <link rel="stylesheet" href="./css/common.css" />
+    <script src="./js/changeImage.js"></script>
   </head>
 
   <body>
+    <!-- 포스트잇 추가 오답 입력 폼 -->
     <div class="rectangle">
       <div class="title">오답</div>
       <div class="subtitle">중요도</div>
-      <button class="custom-button" id="button1" value="1">
-        <img src="images/Group 15.svg" alt="Button 1" />
+
+      <!-- 중요도 선택 버튼들 -->
+      <!-- 첫 번째 버튼 -->
+      <button
+        class="custom-button"
+        id="button1"
+        value="1"
+        onclick="changeImage('button1', 'images/imp1.svg', 'images/imp1_press.svg', 'images/imp1_press.svg')">
+        <img src="images/imp1.svg" alt="중요도 1" />
       </button>
-      <button class="custom-button" id="button2" value="2">
-        <img src="images/Group 16.svg" alt="Button 2" />
+
+      <!-- 두 번째 버튼 -->
+      <button
+        class="custom-button"
+        id="button2"
+        value="2"
+        onclick="changeImage('button2', 'images/imp2.svg', 'images/imp2_press.svg', 'images/imp2_press.svg')">
+        <img src="images/imp2.svg" alt="중요도 2" />
       </button>
-      <button class="custom-button" id="button3" value="3">
-        <img src="images/Group 17.svg" alt="Button 3" />
+
+      <!-- 세 번째 버튼 -->
+      <button
+        class="custom-button"
+        id="button3"
+        value="3"
+        onclick="changeImage('button3', 'images/imp3.svg', 'images/imp3_press.svg', 'images/imp3_press.svg')">
+        <img src="images/imp3.svg" alt="중요도 3" />
       </button>
+
+      <!-- 개념 입력 텍스트 영역 -->
       <div class="custom-rectangle">
         <textarea
           id="description"
           placeholder="개념을 입력해주세요(300글자 이내)"></textarea>
       </div>
+
+      <!-- 포스트잇 생성 버튼 -->
       <button type="button" id="submit-button" onclick="createPostit()">
         포스트잇 생성
       </button>
     </div>
 
+    <!-- 하단 네비게이션 위젯 -->
     <div class="widget">
+      <!-- 홈, 개념, 퀴즈, 오답 카테고리로 이동하는 버튼들 -->
       <a class="image-button" href="home.html"
         ><img src="images/home.png" alt="이미지 1"
       /></a>
@@ -48,7 +75,9 @@
       /></a>
     </div>
 
+    <!-- JavaScript 스크립트 -->
     <script>
+      // 서버로부터 토큰을 가져오는 비동기 함수
       async function getToken() {
         try {
           const response = await fetch("http://localhost:3000/token");
@@ -63,6 +92,7 @@
         }
       }
 
+      // 데이터를 서버로 전송하는 비동기 함수
       async function postData(importance, description) {
         const apiUrl = "http://localhost:3000/wrong";
         const token = await getToken();
@@ -93,6 +123,7 @@
         }
       }
 
+      // 포스트잇을 생성하는 함수
       function createPostit() {
         const selectedButton = document.querySelector(
           ".custom-button.selected"
@@ -101,12 +132,15 @@
 
         if (!selectedButton || !description) {
           console.error("Please select a button and provide a description.");
+          alert("중요도와 설명을 입력해주세요!");
           return;
         }
 
         postData(selectedButton.value, description);
+        alert("포스트잇이 생성되었습니다!");
       }
 
+      // 각 버튼에 중요도 선택 이벤트 핸들러 추가
       function addButtonClickHandler(buttonId) {
         const button = document.getElementById(buttonId);
 

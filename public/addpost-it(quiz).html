@@ -7,6 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="css/add-quiz.css" />
     <link rel="stylesheet" href="css/common.css" />
+    <script src="./js/changeImage.js"></script>
   </head>
 
   <body>
@@ -14,14 +15,32 @@
       <div class="title">퀴즈</div>
       <div class="subtitle">중요도</div>
 
-      <button class="custom-button" id="button1" value="1">
-        <img src="images/Group 15.svg" alt="Button 1" />
+      <!-- 중요도 선택 버튼들 -->
+      <!-- 첫 번째 버튼 -->
+      <button
+        class="custom-button"
+        id="button1"
+        value="1"
+        onclick="changeImage('button1', 'images/imp1.svg', 'images/imp1_press.svg', 'images/imp1_press.svg')">
+        <img src="images/imp1.svg" alt="중요도 1" />
       </button>
-      <button class="custom-button" id="button2" value="2">
-        <img src="images/Group 16.svg" alt="Button 2" />
+
+      <!-- 두 번째 버튼 -->
+      <button
+        class="custom-button"
+        id="button2"
+        value="2"
+        onclick="changeImage('button2', 'images/imp2.svg', 'images/imp2_press.svg', 'images/imp2_press.svg')">
+        <img src="images/imp2.svg" alt="중요도 2" />
       </button>
-      <button class="custom-button" id="button3" value="3">
-        <img src="images/Group 17.svg" alt="Button 3" />
+
+      <!-- 세 번째 버튼 -->
+      <button
+        class="custom-button"
+        id="button3"
+        value="3"
+        onclick="changeImage('button3', 'images/imp3.svg', 'images/imp3_press.svg', 'images/imp3_press.svg')">
+        <img src="images/imp3.svg" alt="중요도 3" />
       </button>
       <div class="custom-rectangle">
         <textarea
@@ -110,10 +129,12 @@
           console.error(
             "Please select a button, provide a question, and a description."
           );
+          alert("중요도와 설명을 입력해주세요!");
           return;
         }
 
         postData(selectedButton.value, question.value, description);
+        alert("포스트잇이 생성되었습니다!");
       }
 
       function addButtonClickHandler(buttonId) {
