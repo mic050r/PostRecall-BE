@@ -44,6 +44,7 @@
 .rectangle {
   width: 155px;
   height: 155px;
+  color: #2c2c2c;
   flex-shrink: 0;
   border-radius: 6px;
   background: #fff;
