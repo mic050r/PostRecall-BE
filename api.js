@@ -147,7 +147,7 @@ app.get("/auth/info", (req, res) => {
 });
 
 // Inquiry 목록 조회 API
-app.get("/inquiry-list", (req, res) => {
+app.get("/inquiries", (req, res) => {
   pool
     .getConnection()
     .then((conn) => {
@@ -159,6 +159,40 @@ app.get("/inquiry-list", (req, res) => {
 
           // 조회된 결과를 클라이언트에게 응답
           res.json(result);
+        })
+        .catch((err) => {
+          conn.release(); // 연결 반환
+
+          console.error("조회 중 오류 발생:", err);
+          res.status(500).json({ error: "서버 오류" });
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "서버 오류" });
+    });
+});
+
+// 단일 Inquiry 조회 API
+app.get("/inquiries/:id", (req, res) => {
+  const inquiryId = req.params.id;
+
+  pool
+    .getConnection()
+    .then((conn) => {
+      conn
+        .query("SELECT * FROM Inquiry WHERE inquiry_id = ?", [inquiryId])
+        .then((result) => {
+          conn.release(); // 연결 반환
+
+          // 조회된 결과를 클라이언트에게 응답
+          if (result.length > 0) {
+            res.json(result[0]);
+          } else {
+            res
+              .status(404)
+              .json({ error: "해당 ID의 Inquiry를 찾을 수 없습니다." });
+          }
         })
         .catch((err) => {
           conn.release(); // 연결 반환
