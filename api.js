@@ -71,6 +71,7 @@ const kakao = {
   clientID: "2c536552403975785e3fdc6053dfb673",
   clientSecret: "BHcC3tbvBXLAMDPfOav74BDmhIZFTe1s",
   redirectUri: "http://localhost:3000/auth/kakao/callback",
+  logout_url: "http://localhost:3000/kakao/logout",
 };
 
 // http://localhost:3000/auth/kakao
@@ -238,60 +239,64 @@ app.post("/inquiries", (req, res) => {
 });
 
 // 카카오 로그아웃
-// auth//kakao/logout
+// // auth//kakao/logout
 app.get("/kakao/logout", async (req, res) => {
-  try {
-    const ACCESS_TOKEN = req.session.accessToken;
-
-    // 카카오 로그아웃
-    await kakaoLogout(ACCESS_TOKEN);
-
-    // 세션 제거
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("세션 제거 중 에러:", err);
-      }
-    });
-
-    res.redirect("/");
-  } catch (error) {
-    console.error("로그아웃 중 에러:", error);
-    res.status(500).json({ error: "로그아웃 중 에러 발생" });
-  }
+  const kakaoAuthURL = `https://kauth.kakao.com/oauth/logout?client_id=${kakao.clientID}&logout_redirect_uri=${kakao.logout_url}`;
+  res.redirect(kakaoAuthURL);
 });
+// app.get("/kakao/logout", async (req, res) => {
+//   try {
+//     const ACCESS_TOKEN = req.session.accessToken;
 
-// kakaoLogout 함수 정의
-function kakaoLogout(accessToken) {
-  return new Promise((resolve, reject) => {
-    if (!accessToken) {
-      console.log("Not logged in."); // 이미 로그아웃 되어있음
-      resolve();
-      return;
-    }
+//     // 카카오 로그아웃
+//     await kakaoLogout(ACCESS_TOKEN);
 
-    axios({
-      method: "post",
-      url: "https://kapi.kakao.com/v1/user/logout",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then((response) => {
-        if (response.data.id) {
-          // 카카오 응답에서 로그아웃 성공 여부 확인
-          console.log("Kakao logout successful");
-          resolve();
-        } else {
-          console.error("Kakao logout failed");
-          reject("카카오 로그아웃 실패");
-        }
-      })
-      .catch((error) => {
-        console.error("카카오 로그아웃 중 에러:", error);
-        reject("카카오 로그아웃 중 에러 발생");
-      });
-  });
-}
+//     // 세션 제거
+//     req.session.destroy((err) => {
+//       if (err) {
+//         console.error("세션 제거 중 에러:", err);
+//       }
+//     });
+
+//     res.redirect("/");
+//   } catch (error) {
+//     console.error("로그아웃 중 에러:", error);
+//     res.status(500).json({ error: "로그아웃 중 에러 발생" });
+//   }
+// });
+
+// // kakaoLogout 함수 정의
+// function kakaoLogout(accessToken) {
+//   return new Promise((resolve, reject) => {
+//     if (!accessToken) {
+//       console.log("Not logged in."); // 이미 로그아웃 되어있음
+//       resolve();
+//       return;
+//     }
+
+//     axios({
+//       method: "post",
+//       url: "https://kapi.kakao.com/v1/user/logout",
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     })
+//       .then((response) => {
+//         if (response.data.id) {
+//           // 카카오 응답에서 로그아웃 성공 여부 확인
+//           console.log("Kakao logout successful");
+//           resolve();
+//         } else {
+//           console.error("Kakao logout failed");
+//           reject("카카오 로그아웃 실패");
+//         }
+//       })
+//       .catch((error) => {
+//         console.error("카카오 로그아웃 중 에러:", error);
+//         reject("카카오 로그아웃 중 에러 발생");
+//       });
+//   });
+// }
 // 개념 포스트잇 POST API 생성
 app.post("/concept", (req, res) => {
   const { token, importance, description } = req.body;
