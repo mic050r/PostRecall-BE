@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./css/category.css" />
     <script src="./js/changeImage.js"></script>
 
+    <!-- CSS 스타일 추가 -->
     <style>
       .rectangle {
         cursor: pointer;
@@ -17,7 +18,9 @@
     </style>
   </head>
   <body>
+    <!-- 퀴즈 포스트잇 모음집 화면 구성 -->
     <div class="title"><strong>퀴즈</strong></div>
+
     <!-- 중요도 선택 버튼들 -->
     <!-- 첫 번째 버튼 -->
     <button
@@ -45,6 +48,8 @@
       onclick="fetchQuizImportance(3); changeImage('button3', 'images/imp3_.svg', 'images/imp3_press.svg', 'images/imp3_press.svg')">
       <img src="images/imp3_.svg" alt="중요도 3" />
     </button>
+
+    <!-- 중요도 정렬 옵션 드롭다운 -->
     <div class="option">
       <select id="sortDropdown" onchange="toggleOptions()">
         <option value="0">중요도</option>
@@ -53,11 +58,14 @@
       </select>
     </div>
 
+    <!-- 동적으로 생성될 퀴즈 포스트잇 엘리먼트가 들어갈 컨테이너 -->
     <div class="rectangles" id="rectangleContainer">
       <!-- 동적으로 생성될 엘리먼트들이 들어갈 컨테이너 -->
     </div>
 
+    <!-- 하단 네비게이션 위젯 -->
     <div class="widget">
+      <!-- 홈, 개념, 퀴즈, 오답 카테고리로 이동하는 버튼들 -->
       <a class="image-button" href="home.html"
         ><img src="images/home.png" alt="이미지 1"
       /></a>
@@ -72,7 +80,9 @@
       /></a>
     </div>
 
+    <!-- JavaScript 스크립트 -->
     <script>
+      // 중요도 정렬 옵션에 따라 데이터를 가져와 화면을 갱신하는 함수
       async function toggleOptions() {
         var sortDropdown = document.getElementById("sortDropdown");
         var selectedValue = sortDropdown.value;
@@ -86,6 +96,7 @@
 
       let clientToken; // 토큰 값을 저장할 변수
 
+      // 서버로부터 토큰을 가져오는 비동기 함수
       async function getToken() {
         try {
           const response = await fetch("http://localhost:3000/token");
@@ -100,6 +111,7 @@
         }
       }
 
+      // 동적으로 생성된 엘리먼트를 만들어 컨테이너에 추가하는 함수
       function createRectangle(question, description) {
         const rectangle = document.createElement("div");
         rectangle.classList.add("rectangle");
@@ -107,6 +119,7 @@
 
         let isFlipped = false; // 사각형의 현재 상태 추적
 
+        // 사각형을 클릭하면 내용이 변경되는 이벤트 핸들러
         rectangle.addEventListener("click", function () {
           if (isFlipped) {
             rectangle.style.transform = "scaleX(1)";
@@ -124,6 +137,7 @@
         document.getElementById("rectangleContainer").appendChild(rectangle);
       }
 
+      // 서버에서 데이터를 가져와 화면을 갱신하는 함수
       function fetchData(endpoint, order = "", importance = "") {
         const serverUrl = "http://localhost:3000";
         const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
@@ -134,7 +148,7 @@
           .then((response) => response.json())
           .then((data) => {
             const container = document.getElementById("rectangleContainer");
-            container.innerHTML = "";
+            container.innerHTML = ""; // 기존의 자식 엘리먼트 제거
 
             data.forEach((item) => {
               createRectangle(item.question, item.description);
@@ -145,21 +159,25 @@
           });
       }
 
+      // 서버에서 퀴즈 목록을 가져와 초기 데이터 로딩
       async function fetchQuizList() {
         await getToken();
         fetchData("/quiz-list");
       }
 
+      // 중요도에 따라 퀴즈를 가져오는 함수
       async function fetchQuizImportance(importance) {
         await getToken();
         fetchData("/quiz-importance", "", importance);
       }
 
+      // 중요도 정렬에 따라 퀴즈를 가져오는 함수
       async function fetchQuizSort(order) {
         await getToken();
         fetchData("/quiz-sort", order);
       }
 
+      // 페이지 로드 시 초기 데이터 로딩
       fetchQuizList();
     </script>
   </body>

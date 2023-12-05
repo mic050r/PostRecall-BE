@@ -77,3 +77,28 @@ th {
   font-size: 12px;
   color: #333;
 }
+#detailContainer {
+  /* 팝업 창 스타일 설정 */
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 60%; /* 팝업 창 너비 */
+  max-width: 500px; /* 팝업 창 최대 너비*/
+  height: 70%; /* 팝업 창의 높이. */
+  max-height: 220px; /* 팝업 창의 최대 높이 */
+  overflow-y: auto; /* 내용이 너무 많을 때 스크롤 */
+}
+
+#closeButton {
+  /* 닫기 버튼 스타일 설정 */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}

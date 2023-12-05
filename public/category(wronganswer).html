@@ -11,7 +11,9 @@
   </head>
 
   <body>
+    <!-- 오답 포스트잇 모음집 화면 구성 -->
     <div class="title"><strong>오답</strong></div>
+
     <!-- 중요도 선택 버튼들 -->
     <!-- 첫 번째 버튼 -->
     <button
@@ -39,6 +41,8 @@
       onclick="fetchWrongImportance(3); changeImage('button3', 'images/imp3_.svg', 'images/imp3_press.svg', 'images/imp3_press.svg')">
       <img src="images/imp3_.svg" alt="중요도 3" />
     </button>
+
+    <!-- 중요도 정렬 옵션 드롭다운 -->
     <div class="option">
       <select id="sortDropdown" onchange="toggleOptions()">
         <option value="0">중요도</option>
@@ -47,11 +51,14 @@
       </select>
     </div>
 
+    <!-- 동적으로 생성될 오답 포스트잇 엘리먼트가 들어갈 컨테이너 -->
     <div class="rectangles" id="rectangleContainer">
       <!-- 동적으로 생성될 엘리먼트들이 들어갈 컨테이너 -->
     </div>
 
+    <!-- 하단 네비게이션 위젯 -->
     <div class="widget">
+      <!-- 홈, 개념, 퀴즈, 오답 카테고리로 이동하는 버튼들 -->
       <a class="image-button" href="home.html"
         ><img src="images/home.png" alt="이미지 1"
       /></a>
@@ -66,7 +73,9 @@
       /></a>
     </div>
 
+    <!-- JavaScript 스크립트 -->
     <script>
+      // 중요도 정렬 옵션에 따라 데이터를 가져와 화면을 갱신하는 함수
       async function toggleOptions() {
         var sortDropdown = document.getElementById("sortDropdown");
         var selectedValue = sortDropdown.value;
@@ -80,6 +89,7 @@
 
       let clientToken; // 토큰 값을 저장할 변수
 
+      // 서버로부터 토큰을 가져오는 비동기 함수
       async function getToken() {
         try {
           const response = await fetch("http://localhost:3000/token");
@@ -94,15 +104,16 @@
         }
       }
 
+      // 동적으로 오답 포스트잇 엘리먼트를 생성하는 함수
       function createRectangle(description) {
         const rectangle = document.createElement("div");
         rectangle.classList.add("rectangle");
-        // 데이터를 이용하여 엘리먼트 내용을 동적으로 생성할 수 있음
         rectangle.textContent = description; // 데이터의 description으로 변경
 
         document.getElementById("rectangleContainer").appendChild(rectangle);
       }
 
+      // 서버에서 데이터를 가져와 동적으로 엘리먼트 생성
       function fetchData(endpoint, order = "", importance = "") {
         const serverUrl = "http://localhost:3000";
         const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
@@ -125,21 +136,25 @@
           });
       }
 
+      // 서버에서 오답 목록을 가져와 초기 데이터 로딩
       async function fetchWrongList() {
         await getToken();
         fetchData("/wrong-list");
       }
 
+      // 중요도에 따라 오답을 가져오는 함수
       async function fetchWrongImportance(importance) {
         await getToken();
         fetchData("/wrong-importance", "", importance);
       }
 
+      // 중요도 정렬에 따라 오답을 가져오는 함수
       async function fetchWrongSort(order) {
         await getToken();
         fetchData("/wrong-sort", order);
       }
 
+      // 페이지 로드 시 초기 데이터 로딩
       fetchWrongList();
     </script>
   </body>
