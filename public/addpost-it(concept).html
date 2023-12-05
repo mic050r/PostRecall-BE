@@ -11,9 +11,11 @@
   </head>
 
   <body>
+    <!-- 개념 포스트잇 추가 입력 폼 -->
     <div class="rectangle">
       <div class="title">개념</div>
       <div class="subtitle">중요도</div>
+
       <!-- 중요도 선택 버튼들 -->
       <!-- 첫 번째 버튼 -->
       <button
@@ -41,46 +43,55 @@
         onclick="changeImage('button3', 'images/imp3.svg', 'images/imp3_press.svg', 'images/imp3_press.svg')">
         <img src="images/imp3.svg" alt="중요도 3" />
       </button>
+
+      <!-- 개념 입력 텍스트 영역 -->
       <div class="custom-rectangle">
         <textarea
           id="description"
           placeholder="개념을 입력해주세요(300글자 이내)"></textarea>
       </div>
+
+      <!-- 포스트잇 생성 버튼 -->
       <button type="button" id="submit-button" onclick="createPostit()">
         포스트잇 생성
       </button>
     </div>
 
+    <!-- 하단 네비게이션 위젯 -->
     <div class="widget">
+      <!-- 홈, 개념, 퀴즈, 오답 카테고리로 이동하는 버튼들 -->
       <a class="image-button" href="home.html"
-        ><img src="images/home.png" alt="이미지 1"
+        ><img src="images/home.png" alt="홈"
       /></a>
       <a class="image-button" href="category(concept).html"
-        ><img src="images/개념.png" alt="이미지 2"
+        ><img src="images/개념.png" alt="개념"
       /></a>
       <a class="image-button" href="category(quiz).html"
-        ><img src="images/퀴즈.png" alt="이미지 3"
+        ><img src="images/퀴즈.png" alt="퀴즈"
       /></a>
       <a class="image-button" href="category(wronganswer).html"
-        ><img src="images/오답.png" alt="이미지 4"
+        ><img src="images/오답.png" alt="오답"
       /></a>
     </div>
 
+    <!-- JavaScript 스크립트 -->
     <script>
+      // 서버로부터 토큰을 가져오는 비동기 함수
       async function getToken() {
         try {
           const response = await fetch("http://localhost:3000/token");
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error("네트워크 응답이 올바르지 않습니다");
           }
           const data = await response.json();
           return data.token;
         } catch (error) {
-          console.error("Error fetching token:", error);
+          console.error("토큰을 가져오는 중 에러 발생:", error);
           throw error;
         }
       }
 
+      // 데이터를 서버로 전송하는 비동기 함수
       async function postData(importance, description) {
         const apiUrl = "http://localhost:3000/concept";
         const token = await getToken();
@@ -101,16 +112,17 @@
           });
 
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error("네트워크 응답이 올바르지 않습니다");
           }
 
           const responseData = await response.json();
-          console.log("Data:", responseData);
+          console.log("데이터:", responseData);
         } catch (error) {
-          console.error("Error:", error);
+          console.error("에러:", error);
         }
       }
 
+      // 포스트잇을 생성하는 함수
       function createPostit() {
         const selectedButton = document.querySelector(
           ".custom-button.selected"
@@ -118,7 +130,7 @@
         const description = document.getElementById("description").value;
 
         if (!selectedButton || !description) {
-          console.error("Please select a button and provide a description.");
+          console.error("버튼을 선택하고 설명을 입력하세요.");
           alert("중요도와 설명을 입력해주세요!");
           return;
         }
@@ -127,6 +139,7 @@
         alert("포스트잇이 생성되었습니다!");
       }
 
+      // 각 버튼에 중요도 선택 이벤트 핸들러 추가
       function addButtonClickHandler(buttonId) {
         const button = document.getElementById(buttonId);
 
