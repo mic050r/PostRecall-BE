@@ -85,7 +85,7 @@
         </li>
         <!-- <li><a href="javascript:void(0)">버전정보</a></li> -->
         <li><a href="./noticeboard.html">문의사항</a></li>
-        <li><a href="http://localhost:3000/kakao/logout">로그아웃</a></li>
+        <li><a href="http://localhost:3000/auth/kakao/logout">로그아웃</a></li>
       </ul>
     </div>
 
@@ -108,7 +108,7 @@
       // 예시로 fetch를 사용한 클라이언트 측 코드
       async function getUserInfo() {
         try {
-          const response = await fetch("http://localhost:3000/get-user-info", {
+          const response = await fetch("http://localhost:3000/auth/user/info", {
             method: "GET",
             credentials: "include",
           });

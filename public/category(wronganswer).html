@@ -92,7 +92,7 @@
       // 서버로부터 토큰을 가져오는 비동기 함수
       async function getToken() {
         try {
-          const response = await fetch("http://localhost:3000/token");
+          const response = await fetch("http://localhost:3000/auth/token");
           if (!response.ok) {
             throw new Error("네트워크 응답이 올바르지 않습니다");
           }

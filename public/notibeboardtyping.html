@@ -35,7 +35,7 @@
           // 비동기 함수 내에서 await 사용
           async function getToken() {
             try {
-              const response = await fetch("http://localhost:3000/token");
+              const response = await fetch("http://localhost:3000/auth/token");
               if (!response.ok) {
                 throw new Error("Network response was not ok");
               }
