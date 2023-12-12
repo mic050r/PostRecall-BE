@@ -20,12 +20,6 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use("/style", express.static(__dirname + "/style"));
 
-app.use("/inquiries", inquiriesRouter); // 문의사항 라우터
-app.use("/concept", conceptRouter); // 개념 포스트잇 라우터
-app.use("/quiz", quizRouter); // 개념 포스트잇 라우터
-app.use("/wrong", worngRouter); // 개념 포스트잇 라우터
-app.use("/auth", authRouter); // 개념 포스트잇 라우터
-
 app.use(
   express.static("public", {
     setHeaders: (res, path, stat) => {
@@ -33,6 +27,12 @@ app.use(
     },
   })
 );
+
+app.use("/inquiries", inquiriesRouter); // 문의사항 라우터
+app.use("/concept", conceptRouter); // 개념 포스트잇 라우터
+app.use("/quiz", quizRouter); // 퀴즈 포스트잇 라우터
+app.use("/wrong", worngRouter); // 오답 포스트잇 라우터
+app.use("/auth", authRouter); // auth 라우터
 
 // Express 애플리케이션 설정
 app.set("view engine", "html");

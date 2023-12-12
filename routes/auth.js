@@ -107,6 +107,7 @@ router.get("/user/info", (req, res) => {
   res.json(userInfo);
 });
 
+// 카카오 로그아웃 -> 카카오 로그아웃에 url 추가해야함
 router.get("/kakao/logout", async (req, res) => {
   // 세션 초기화
   req.session.destroy((err) => {
