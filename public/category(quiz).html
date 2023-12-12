@@ -162,19 +162,19 @@
       // 서버에서 퀴즈 목록을 가져와 초기 데이터 로딩
       async function fetchQuizList() {
         await getToken();
-        fetchData("/quiz-list");
+        fetchData("/quiz/list");
       }
 
       // 중요도에 따라 퀴즈를 가져오는 함수
       async function fetchQuizImportance(importance) {
         await getToken();
-        fetchData("/quiz-importance", "", importance);
+        fetchData("/quiz/importance", "", importance);
       }
 
       // 중요도 정렬에 따라 퀴즈를 가져오는 함수
       async function fetchQuizSort(order) {
         await getToken();
-        fetchData("/quiz-sort", order);
+        fetchData("/quiz/sort", order);
       }
 
       // 페이지 로드 시 초기 데이터 로딩
