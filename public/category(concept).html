@@ -139,19 +139,19 @@
       // 중요도 순으로 개념 포스트잇 데이터를 가져오는 함수
       async function fetchConceptList() {
         await getToken();
-        fetchData("/concept-list");
+        fetchData("/concept/list");
       }
 
       // 선택된 중요도에 따라 개념 포스트잇 데이터를 가져오는 함수
       async function fetchConceptImportance(importance) {
         await getToken();
-        fetchData("/concept-importance", "", importance);
+        fetchData("/concept/importance", "", importance);
       }
 
       // 중요도에 따라 정렬된 개념 포스트잇 데이터를 가져오는 함수
       async function fetchConceptSort(order) {
         await getToken();
-        fetchData("/concept-sort", order);
+        fetchData("/concept/sort", order);
       }
 
       // 페이지 로드 시 초기 데이터 로딩
