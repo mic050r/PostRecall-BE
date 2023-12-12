@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db/conn"); // 데이터베이스 연결 모듈 가져오기
 
-// 개념 포스트잇 POST API 생성
+// 오답 포스트잇 POST API 생성
 router.post("/", (req, res) => {
   const { token, importance, description } = req.body;
 
@@ -13,7 +13,7 @@ router.post("/", (req, res) => {
       // 데이터베이스에 데이터 삽입
       conn
         .query(
-          "INSERT INTO Concept (token, importance, description) VALUES (?, ?, ?)",
+          "INSERT INTO Wrong (token, importance, description) VALUES (?, ?, ?)",
           [token, importance, description]
         )
         .then((result) => {
@@ -33,7 +33,7 @@ router.post("/", (req, res) => {
     });
 });
 
-// 개념 리스트 GET API 생성
+// 퀴즈 리스트 GET API 생성
 router.get("/list", (req, res) => {
   const { token } = req.query;
 
@@ -43,7 +43,7 @@ router.get("/list", (req, res) => {
     .then((conn) => {
       // 데이터베이스에서 데이터 조회
       conn
-        .query("SELECT * FROM Concept WHERE token = ?", [token])
+        .query("SELECT * FROM Wrong WHERE token = ?", [token])
         .then((results) => {
           if (results.length === 0) {
             // 해당 토큰에 대한 데이터가 없을 경우
@@ -69,7 +69,7 @@ router.get("/list", (req, res) => {
     });
 });
 
-// 개념 포스트잇 중요도 태그 별 GET API
+// 퀴즈 포스트잇 중요도 태그 별 GET API
 router.get("/importance", (req, res) => {
   const { token, importance } = req.query;
 
@@ -79,7 +79,7 @@ router.get("/importance", (req, res) => {
     .then((conn) => {
       // 데이터베이스에서 데이터 조회
       conn
-        .query("SELECT * FROM Concept WHERE token = ? AND importance = ?", [
+        .query("SELECT * FROM Wrong WHERE token = ? AND importance = ?", [
           token,
           importance,
         ])
@@ -108,7 +108,7 @@ router.get("/importance", (req, res) => {
     });
 });
 
-// 개념 중요도 별로 내림차순, 오름차순
+// 오답 중요도 별로 내림차순, 오름차순
 router.get("/sort", (req, res) => {
   const { token, order } = req.query;
 
@@ -117,7 +117,7 @@ router.get("/sort", (req, res) => {
     .getConnection()
     .then((conn) => {
       // 데이터베이스에서 데이터 조회
-      const sqlQuery = `SELECT * FROM Concept WHERE token = ? ORDER BY importance ${
+      const sqlQuery = `SELECT * FROM Wrong WHERE token = ? ORDER BY importance ${
         order === "asc" ? "ASC" : "DESC"
       }`;
       conn

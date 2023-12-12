@@ -139,19 +139,19 @@
       // 서버에서 오답 목록을 가져와 초기 데이터 로딩
       async function fetchWrongList() {
         await getToken();
-        fetchData("/wrong-list");
+        fetchData("/wrong/list");
       }
 
       // 중요도에 따라 오답을 가져오는 함수
       async function fetchWrongImportance(importance) {
         await getToken();
-        fetchData("/wrong-importance", "", importance);
+        fetchData("/wrong/importance", "", importance);
       }
 
       // 중요도 정렬에 따라 오답을 가져오는 함수
       async function fetchWrongSort(order) {
         await getToken();
-        fetchData("/wrong-sort", order);
+        fetchData("/wrong/sort", order);
       }
 
       // 페이지 로드 시 초기 데이터 로딩
