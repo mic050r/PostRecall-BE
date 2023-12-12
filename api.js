@@ -11,6 +11,9 @@ const pool = require("./db/conn"); // 데이터베이스 연결 모듈 가져오
 const qs = require("qs");
 const passport = require("passport");
 
+const bodyParser = require("body-parser");
+const inquiriesRouter = require("./routes/inquiries"); // Import inquiries router
+
 // 기본 설정
 app.use(cors());
 app.use(express.json());
@@ -18,6 +21,7 @@ app.use(express.json());
 // 정적 파일 서빙 설정
 app.use(express.static("public"));
 app.use("/style", express.static(__dirname + "/style"));
+app.use("/inquiries", inquiriesRouter); // Use the inquiries router
 
 app.use(
   express.static("public", {
@@ -66,6 +70,8 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 // 카카오 API 정보
 const kakao = {
   clientID: "2c536552403975785e3fdc6053dfb673",
@@ -151,97 +157,6 @@ app.get("/auth/info", (req, res) => {
 app.get("/kakao/logout", async (req, res) => {
   const kakaoAuthURL = `https://kauth.kakao.com/oauth/logout?client_id=${kakao.clientID}&logout_redirect_uri=${kakao.logout_url}`;
   res.redirect(kakaoAuthURL);
-});
-
-// Inquiry 목록 조회 API
-app.get("/inquiries", (req, res) => {
-  pool
-    .getConnection()
-    .then((conn) => {
-      // 데이터베이스에 데이터 삽입
-      conn
-        .query("SELECT * FROM Inquiry")
-        .then((result) => {
-          conn.release(); // 연결 반환
-
-          // 조회된 결과를 클라이언트에게 응답
-          res.json(result);
-        })
-        .catch((err) => {
-          conn.release(); // 연결 반환
-
-          console.error("조회 중 오류 발생:", err);
-          res.status(500).json({ error: "서버 오류" });
-        });
-    })
-    .catch((err) => {
-      console.error("데이터베이스 연결 오류:", err);
-      res.status(500).json({ error: "서버 오류" });
-    });
-});
-
-// 단일 Inquiry 조회 API
-app.get("/inquiries/:id", (req, res) => {
-  const inquiryId = req.params.id;
-
-  pool
-    .getConnection()
-    .then((conn) => {
-      conn
-        .query("SELECT * FROM Inquiry WHERE inquiry_id = ?", [inquiryId])
-        .then((result) => {
-          conn.release(); // 연결 반환
-
-          // 조회된 결과를 클라이언트에게 응답
-          if (result.length > 0) {
-            res.json(result[0]);
-          } else {
-            res
-              .status(404)
-              .json({ error: "해당 ID의 Inquiry를 찾을 수 없습니다." });
-          }
-        })
-        .catch((err) => {
-          conn.release(); // 연결 반환
-
-          console.error("조회 중 오류 발생:", err);
-          res.status(500).json({ error: "서버 오류" });
-        });
-    })
-    .catch((err) => {
-      console.error("데이터베이스 연결 오류:", err);
-      res.status(500).json({ error: "서버 오류" });
-    });
-});
-
-// Inquiry 생성 API
-app.post("/inquiries", (req, res) => {
-  const { user_id, title, message, status } = req.body;
-
-  pool
-    .getConnection()
-    .then((conn) => {
-      // 데이터베이스에 데이터 삽입
-      conn
-        .query(
-          "INSERT INTO Inquiry (user_id, title, message, status) VALUES (?, ?, ?, ?)",
-          [user_id, title, message, status]
-        )
-        .then((result) => {
-          console.log("데이터가 성공적으로 삽입되었습니다.");
-          res.json({ message: "데이터가 성공적으로 삽입되었습니다." });
-          conn.release(); // 연결 반환
-        })
-        .catch((err) => {
-          console.error("데이터 삽입 오류:", err);
-          res.status(500).json({ error: "데이터 삽입 오류" });
-          conn.release(); // 연결 반환
-        });
-    })
-    .catch((err) => {
-      console.error("데이터베이스 연결 오류:", err);
-      res.status(500).json({ error: "데이터베이스 연결 오류" });
-    });
 });
 
 // 개념 포스트잇 POST API 생성
