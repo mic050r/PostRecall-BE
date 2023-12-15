@@ -33,7 +33,7 @@ router.post("/", (req, res) => {
     });
 });
 
-// 퀴즈 리스트 GET API 생성
+// 오답 리스트 GET API 생성
 router.get("/list", (req, res) => {
   const { token } = req.query;
 
@@ -69,7 +69,46 @@ router.get("/list", (req, res) => {
     });
 });
 
-// 퀴즈 포스트잇 중요도 태그 별 GET API
+// 오답 포스트잇 조회 API
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+
+  // 데이터베이스 풀에서 연결 얻기
+  pool
+    .getConnection()
+    .then((conn) => {
+      // 데이터베이스에서 데이터 조회
+      conn
+        .query("SELECT * FROM Wrong WHERE id = ?", [id])
+        .then((results) => {
+          if (results.length === 0) {
+            // 해당 ID에 대한 데이터가 없을 경우
+            res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+          } else {
+            // 조회된 데이터를 JSON 응답으로 반환
+            const data = {
+              id: results[0].id,
+              token: results[0].token,
+              importance: results[0].importance,
+              description: results[0].description,
+            };
+            res.json(data);
+          }
+          conn.release(); // 연결 반환
+        })
+        .catch((err) => {
+          console.error("데이터 조회 오류:", err);
+          res.status(500).json({ error: "데이터 조회 오류" });
+          conn.release(); // 연결 반환
+        });
+    })
+    .catch((err) => {
+      console.error("데이터베이스 연결 오류:", err);
+      res.status(500).json({ error: "데이터베이스 연결 오류" });
+    });
+});
+
+// 오답 포스트잇 중요도 태그 별 GET API
 router.get("/importance", (req, res) => {
   const { token, importance } = req.query;
 
