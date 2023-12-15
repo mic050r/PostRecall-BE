@@ -110,6 +110,29 @@ router.get("/:id", (req, res) => {
     });
 });
 
+// 퀴즈 포스트잇 질문, 설명, 중요도 수정
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { importance, question, description } = req.body;
+    const conn = await pool.getConnection();
+    const result = await conn.query(
+      "UPDATE Quiz SET importance = ? , question = ? , description =? WHERE id = ?",
+      [importance, question, description, id]
+    );
+    conn.release();
+
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+    } else {
+      res.json({ message: "데이터가 성공적으로 업데이트되었습니다." });
+    }
+  } catch (err) {
+    console.error("데이터 업데이트 오류:", err);
+    res.status(500).json({ error: "데이터 업데이트 오류" });
+  }
+});
+
 // 퀴즈 포스트잇 중요도 태그 별 GET API
 router.get("/importance", (req, res) => {
   const { token, importance } = req.query;
