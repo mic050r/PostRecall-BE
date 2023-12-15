@@ -131,6 +131,25 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// 오답 포스트잇 삭제
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const conn = await pool.getConnection();
+    const result = await conn.query("DELETE FROM Wrong WHERE id = ?", [id]);
+    conn.release();
+
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: "데이터를 찾을 수 없습니다." });
+    } else {
+      res.json({ message: "데이터가 성공적으로 삭제되었습니다." });
+    }
+  } catch (err) {
+    console.error("데이터 삭제 오류:", err);
+    res.status(500).json({ error: "데이터 삭제 오류" });
+  }
+});
+
 // 오답 포스트잇 중요도 태그 별 GET API
 router.get("/importance", (req, res) => {
   const { token, importance } = req.query;
