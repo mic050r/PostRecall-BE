@@ -146,7 +146,7 @@ router.get("/kakao/callback", async (req, res) => {
 });
 
 // 토큰 값을 반환하는 API 엔드포인트
-router.get("/getToken", (req, res) => {
+router.get("/token", (req, res) => {
   const jwtToken = req.cookies.jwtToken;
 
   if (jwtToken) {
@@ -154,10 +154,6 @@ router.get("/getToken", (req, res) => {
   } else {
     res.status(401).json({ error: "Token not found" });
   }
-});
-
-router.get("/token", (req, res) => {
-  res.json({ token: jwtToken });
 });
 
 // 사용자 프로필, 닉네임 가져오는 API
