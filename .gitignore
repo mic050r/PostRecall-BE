@@ -4,3 +4,5 @@ nodejs-api
 
 # kakao login 파일을 ignore
 login.js  
+
+.env
