@@ -4,25 +4,7 @@ const jwt = require("jsonwebtoken");
 const pool = require("../db/conn"); // 데이터베이스 연결 모듈 가져오기
 const cookieParser = require("cookie-parser");
 router.use(cookieParser());
-
-// 토큰이 유효한지 확인하는 함수
-const verifyToken = (req, res, next) => {
-  const token = req.cookies.jwtToken; // 수정된 부분
-
-  if (!token) {
-    return res.status(401).json({ error: "인증 토큰이 없습니다." });
-  }
-
-  // JWT 토큰 검증
-  try {
-    const decodedToken = jwt.verify(token, "your_secret_key");
-    req.user = { ...decodedToken, user_id: decodedToken.userId.toString() };
-    next();
-  } catch (err) {
-    console.error("JWT 검증 오류:", err);
-    return res.status(401).json({ error: "유효하지 않은 토큰입니다." });
-  }
-};
+const { verifyToken } = require("../middleware/token"); // 토큰 검증 미들웨어 가져오기
 
 // 개념 포스트잇 POST API 생성
 // POST /concept
