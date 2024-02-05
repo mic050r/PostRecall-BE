@@ -94,23 +94,6 @@
         }
       }
 
-      let clientToken; // 토큰 값을 저장할 변수
-
-      // 서버로부터 토큰을 가져오는 비동기 함수
-      async function getToken() {
-        try {
-          const response = await fetch("http://localhost:3000/auth/token");
-          if (!response.ok) {
-            throw new Error("네트워크 응답이 올바르지 않습니다");
-          }
-          const data = await response.json();
-          clientToken = data.token; // 토큰 값 설정
-        } catch (error) {
-          console.error("토큰을 가져오는 중 오류 발생:", error);
-          throw error;
-        }
-      }
-
       // 동적으로 생성된 엘리먼트를 만들어 컨테이너에 추가하는 함수
       function createRectangle(question, description) {
         const rectangle = document.createElement("div");
@@ -137,11 +120,14 @@
         document.getElementById("rectangleContainer").appendChild(rectangle);
       }
 
+      // 토큰 가져오기
+      const token = localStorage.getItem("jwtToken");
+
       // 서버에서 데이터를 가져와 화면을 갱신하는 함수
       function fetchData(endpoint, order = "", importance = "") {
         const serverUrl = "http://localhost:3000";
-        const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
-          importance ? `&importance=${importance}` : ""
+        const query = `${order ? `?order=${order}` : ""}${
+          importance ? `?importance=${importance}` : ""
         }`;
 
         fetch(`${serverUrl}${endpoint}${query}`)
@@ -161,19 +147,16 @@
 
       // 서버에서 퀴즈 목록을 가져와 초기 데이터 로딩
       async function fetchQuizList() {
-        await getToken();
         fetchData("/quiz/list");
       }
 
       // 중요도에 따라 퀴즈를 가져오는 함수
       async function fetchQuizImportance(importance) {
-        await getToken();
         fetchData("/quiz/importance", "", importance);
       }
 
       // 중요도 정렬에 따라 퀴즈를 가져오는 함수
       async function fetchQuizSort(order) {
-        await getToken();
         fetchData("/quiz/sort", order);
       }
 

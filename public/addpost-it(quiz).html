@@ -17,7 +17,6 @@
       <div class="subtitle">중요도</div>
 
       <!-- 중요도 선택 버튼들 -->
-      <!-- 첫 번째 버튼 -->
       <button
         class="custom-button"
         id="button1"
@@ -26,7 +25,6 @@
         <img src="images/imp1.svg" alt="중요도 1" />
       </button>
 
-      <!-- 두 번째 버튼 -->
       <button
         class="custom-button"
         id="button2"
@@ -35,7 +33,6 @@
         <img src="images/imp2.svg" alt="중요도 2" />
       </button>
 
-      <!-- 세 번째 버튼 -->
       <button
         class="custom-button"
         id="button3"
@@ -83,28 +80,13 @@
 
     <!-- JavaScript 스크립트 -->
     <script>
-      // 서버로부터 토큰을 가져오는 비동기 함수
-      async function getToken() {
-        try {
-          const response = await fetch("http://localhost:3000/auth/token");
-          if (!response.ok) {
-            throw new Error("네트워크 응답이 올바르지 않습니다");
-          }
-          const data = await response.json();
-          return data.token;
-        } catch (error) {
-          console.error("토큰을 가져오는 중 에러 발생:", error);
-          throw error;
-        }
-      }
-
+      // 토큰 가져오기
+      const token = localStorage.getItem("jwtToken");
       // 데이터를 서버로 전송하는 비동기 함수
       async function postData(importance, question, description) {
         const apiUrl = "http://localhost:3000/quiz";
-        const token = await getToken();
 
         const data = {
-          token: token,
           importance: importance,
           question: question,
           description: description,
@@ -115,6 +97,7 @@
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // 토큰을 요청 헤더에 포함
             },
             body: JSON.stringify(data),
           });

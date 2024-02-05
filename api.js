@@ -9,8 +9,8 @@ const bodyParser = require("body-parser");
 const inquiriesRouter = require("./routes/inquiries"); // 문의 사항
 const conceptRouter = require("./routes/concept"); // 개념 포스트잇
 const quizRouter = require("./routes/quiz"); // 퀴즈 포스트잇
-const worngRouter = require("./routes/wrong"); // 퀴즈 포스트잇
-const authRouter = require("./routes/auth"); // 퀴즈 포스트잇
+const worngRouter = require("./routes/wrong"); // 오답노트 포스트잇
+const authRouter = require("./routes/auth"); // 사용자 정보
 
 // 기본 설정
 app.use(cors());

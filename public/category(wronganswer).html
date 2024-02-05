@@ -87,22 +87,8 @@
         }
       }
 
-      let clientToken; // 토큰 값을 저장할 변수
-
-      // 서버로부터 토큰을 가져오는 비동기 함수
-      async function getToken() {
-        try {
-          const response = await fetch("http://localhost:3000/auth/token");
-          if (!response.ok) {
-            throw new Error("네트워크 응답이 올바르지 않습니다");
-          }
-          const data = await response.json();
-          clientToken = data.token; // 토큰 값 설정
-        } catch (error) {
-          console.error("토큰을 가져오는 중 오류 발생:", error);
-          throw error;
-        }
-      }
+      // 토큰 가져오기
+      const token = localStorage.getItem("jwtToken");
 
       // 동적으로 오답 포스트잇 엘리먼트를 생성하는 함수
       function createRectangle(description) {
@@ -116,8 +102,8 @@
       // 서버에서 데이터를 가져와 동적으로 엘리먼트 생성
       function fetchData(endpoint, order = "", importance = "") {
         const serverUrl = "http://localhost:3000";
-        const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
-          importance ? `&importance=${importance}` : ""
+        const query = `${order ? `?order=${order}` : ""}${
+          importance ? `?importance=${importance}` : ""
         }`;
 
         fetch(`${serverUrl}${endpoint}${query}`)
@@ -138,19 +124,16 @@
 
       // 서버에서 오답 목록을 가져와 초기 데이터 로딩
       async function fetchWrongList() {
-        await getToken();
         fetchData("/wrong/list");
       }
 
       // 중요도에 따라 오답을 가져오는 함수
       async function fetchWrongImportance(importance) {
-        await getToken();
         fetchData("/wrong/importance", "", importance);
       }
 
       // 중요도 정렬에 따라 오답을 가져오는 함수
       async function fetchWrongSort(order) {
-        await getToken();
         fetchData("/wrong/sort", order);
       }
 

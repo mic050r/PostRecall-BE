@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const pool = require("../db/conn"); // 데이터베이스 연결 모듈 가져오기
+const { verifyToken } = require("../middleware/token"); // 토큰 검증 미들웨어 가져오기
 const cookieParser = require("cookie-parser");
 router.use(cookieParser());
-const { verifyToken } = require("../middleware/token"); // 토큰 검증 미들웨어 가져오기
 
 // 개념 포스트잇 POST API 생성
 // POST /concept
@@ -19,7 +19,8 @@ router.post("/", verifyToken, async (req, res) => {
       [user_id, importance, description.toString()]
     );
 
-    // 새로 생성된 Concept의 정보를 응답으로 반환
+    // 응답
+    res.json({ message: "데이터가 성공적으로 삽입되었습니다." });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
