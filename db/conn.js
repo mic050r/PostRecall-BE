@@ -1,14 +1,13 @@
-// db.js
-
 const mariadb = require("mariadb");
+require("dotenv").config();
 
 // 데이터베이스 연결 풀 설정
 const pool = mariadb.createPool({
-  host: "localhost", // 데이터베이스 호스트
-  port: 3308,
-  user: "root", // 데이터베이스 사용자명
-  password: "1234", // 데이터베이스 비밀번호
-  database: "post", // 사용할 데이터베이스명
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
 
 module.exports = pool;
