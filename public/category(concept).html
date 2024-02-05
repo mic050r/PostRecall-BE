@@ -15,7 +15,6 @@
     <div class="title"><strong>개념</strong></div>
 
     <!-- 중요도 선택 버튼들 -->
-    <!-- 첫 번째 버튼 -->
     <button
       class="custom-button"
       id="button1"
@@ -87,40 +86,29 @@
         }
       }
 
-      let clientToken; // 토큰 값을 저장할 변수
-
-      // 서버로부터 토큰을 가져오는 비동기 함수
-      async function getToken() {
-        try {
-          const response = await fetch("http://localhost:3000/auth/token");
-          if (!response.ok) {
-            throw new Error("네트워크 응답이 올바르지 않습니다");
-          }
-          const data = await response.json();
-          clientToken = data.token; // 토큰 값 설정
-        } catch (error) {
-          console.error("토큰을 가져오는 중 오류 발생:", error);
-          throw error;
-        }
-      }
-
       // 동적으로 생성된 엘리먼트를 만들어 컨테이너에 추가하는 함수
       function createRectangle(description) {
         const rectangle = document.createElement("div");
         rectangle.classList.add("rectangle");
-        rectangle.textContent = description; // 데이터의 description으로 변경
+        rectangle.textContent = description;
 
         document.getElementById("rectangleContainer").appendChild(rectangle);
       }
+      // 토큰 가져오기
+      const token = localStorage.getItem("jwtToken");
 
       // 서버에서 데이터를 가져와 화면을 갱신하는 함수
       function fetchData(endpoint, order = "", importance = "") {
         const serverUrl = "http://localhost:3000";
-        const query = `?token=${clientToken}${order ? `&order=${order}` : ""}${
-          importance ? `&importance=${importance}` : ""
+        const query = `?${order ? `?order=${order}` : ""}${
+          importance ? `importance=${importance}` : ""
         }`;
 
-        fetch(`${serverUrl}${endpoint}${query}`)
+        fetch(`${serverUrl}${endpoint}${query}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        })
           .then((response) => response.json())
           .then((data) => {
             // 가져온 데이터를 이용하여 엘리먼트 생성
@@ -138,19 +126,16 @@
 
       // 중요도 순으로 개념 포스트잇 데이터를 가져오는 함수
       async function fetchConceptList() {
-        await getToken();
         fetchData("/concept/list");
       }
 
       // 선택된 중요도에 따라 개념 포스트잇 데이터를 가져오는 함수
       async function fetchConceptImportance(importance) {
-        await getToken();
         fetchData("/concept/importance", "", importance);
       }
 
       // 중요도에 따라 정렬된 개념 포스트잇 데이터를 가져오는 함수
       async function fetchConceptSort(order) {
-        await getToken();
         fetchData("/concept/sort", order);
       }
 
