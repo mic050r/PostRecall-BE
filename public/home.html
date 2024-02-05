@@ -90,6 +90,29 @@
     </div>
 
     <script>
+      const getTokenEndpoint = "http://localhost:3000/auth/token";
+
+      // 서버로부터 토큰을 받아와서 localStorage에 저장하는 함수
+      async function getTokenAndSaveToLocalStorage() {
+        try {
+          const response = await fetch(getTokenEndpoint);
+
+          if (response.ok) {
+            const data = await response.json();
+
+            // 받아온 토큰을 localStorage에 저장
+            localStorage.setItem("jwtToken", data.token);
+          } else {
+            console.error("Error fetching token:", response.status);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      // getTokenAndSaveToLocalStorage 함수 호출
+      getTokenAndSaveToLocalStorage();
+
       const menu = document.querySelector(".menu");
       const hamburgerIcon = document.querySelector("#hamburger-icon");
 
