@@ -6,3 +6,6 @@ nodejs-api
 login.js  
 
 .env
+
+config/database.js
+models/index.js
