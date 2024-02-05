@@ -8,8 +8,18 @@ const axios = require("axios");
 const passport = require("passport");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const pool = require("../db/conn"); // 데이터베이스 연결 모듈 가져오기
+const { User } = require("../models"); // 시퀄라이저 모델 가져오기
+const sequelize = require("../config/database");
 require("dotenv").config();
+
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("모델이 성공적으로 동기화되었습니다.");
+  })
+  .catch((error) => {
+    console.error("모델 동기화 오류:", error);
+  });
 
 router.use(cors()); // CORS 미들웨어 추가
 router.use(cookieParser());
@@ -94,32 +104,24 @@ router.get("/kakao/callback", async (req, res) => {
     req.session.nickname = userResponse.data.properties.nickname; // 닉네임
     req.session.profileImage = userResponse.data.properties.profile_image; // 프로필 이미지
 
-    // MariaDB에 사용자 정보 저장 (중복 체크 후 삽입)
-    const connection = await pool.getConnection();
     try {
-      // 이미 존재하는 사용자인지 확인
-      const existingUser = await connection.query(
-        "SELECT * FROM user WHERE kakao_id = ?",
-        [userResponse.data.id]
-      );
+      // MariaDB에 사용자 정보 저장 (중복 체크 후 삽입)
+      const [user, created] = await User.findOrCreate({
+        where: { kakao_id: userResponse.data.id }, // 수정된 부분
+        defaults: {
+          nickname: userResponse.data.properties.nickname,
+          image: userResponse.data.properties.profile_image,
+        },
+      });
 
       let loginuserId;
 
-      if (existingUser.length === 0) {
-        // 중복된 사용자가 없으면 삽입
-        const result = await connection.query(
-          "INSERT INTO user (kakao_id, nickname, image) VALUES (?, ?, ?)",
-          [
-            userResponse.data.id,
-            userResponse.data.properties.nickname,
-            userResponse.data.properties.profile_image,
-          ]
-        );
-        // 최근에 추가된 레코드의 id를 가져오기
-        loginuserId = result.insertId;
+      if (created) {
+        // 새로운 사용자가 생성되었으면
+        loginuserId = user.id;
       } else {
-        // 이미 존재하는 사용자일 경우 기존 사용자의 id를 가져오기
-        loginuserId = existingUser[0].id;
+        // 이미 존재하는 사용자일 경우
+        loginuserId = user.id;
       }
 
       // JWT 토큰 생성
@@ -137,7 +139,7 @@ router.get("/kakao/callback", async (req, res) => {
 
       res.redirect("http://localhost:3000/home.html");
     } finally {
-      connection.release(); // 연결 반환
+      // Sequelize에서는 명시적인 연결 해제가 필요하지 않습니다.
     }
   } catch (error) {
     console.error("Error:", error);
@@ -165,19 +167,10 @@ router.get("/user/info", (req, res) => {
 
   res.json(userInfo);
 });
-
-// 카카오 로그아웃 -> 카카오 로그아웃에 url 추가해야함
-router.get("/kakao/logout", async (req, res) => {
-  // 세션 초기화
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("세션 초기화 오류:", err);
-    }
-
-    // 카카오 로그아웃 URL로 리다이렉트
-    const kakaoAuthURL = `https://kauth.kakao.com/oauth/logout?client_id=${kakao.clientID}&logout_redirect_uri=${kakao.logout_url}`;
-    res.redirect(kakaoAuthURL);
-  });
+// 로그아웃
+router.get("/logout", (req, res) => {
+  req.logout();
+  res.clearCookie("jwtToken"); // 토큰 쿠키 삭제
+  res.redirect("http://localhost:3000/");
 });
-
 module.exports = router;
